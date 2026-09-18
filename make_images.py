@@ -123,38 +123,40 @@ def render(fname, title, subtitle, headers, rows, wraps, style=None, first_bold=
     print("wrote", fname, f"{int(W_px)}x{int(H_px)}")
 
 # ---------- data ----------
-H6 = ["", "omp", "pi", "fx", "opencode", "dsh", "crush"]
+H6 = ["", "omp", "pi", "fx", "opencode", "dsh", "crush", "flue", "eve"]
 
 # 1. identity
 render("1-identity.png",
-  "Identity + distribution", "6 coding-agent harnesses, headless-driver role",
+  "Identity + distribution", "8 coding-agent harnesses, headless-driver role  (flue + eve = frameworks)",
   H6,
-  [["Language / runtime","TS + Rust / Bun","TS / Node 22+","Zig (native 6 MiB)","TS / Bun","TS / Node (+Py wheel)","Go (native)"],
-   ["License","MIT","MIT","Apache-2.0","MIT","MIT","FSL-1.1-MIT"],
-   ["OSI-open?","yes","yes","yes","yes","yes","no (MIT after 2y)"],
-   ["Version tested","18.2.4","0.85.1","0.0.10","1.18.31","0.1.6-alpha.2","0.95.0"],
-   ["Maturity","stable","stable","experimental","stable","alpha, no audit","stable"],
-   ["Stars","~31.6k","~106k (suspect)","new","~208k","preview","~28k"],
-   ["Built-in tools","31","7","~11","~14","~30","~30 (+LSP)"],
-   ["Edit format","hashline","search-replace","string-replace","search-replace","search-replace","search-replace+LSP"]],
-  wraps=[18,16,15,15,15,16,15],
+  [["Language / runtime","TS + Rust / Bun","TS / Node 22+","Zig (native 6 MiB)","TS / Bun","TS / Node (+Py wheel)","Go (native)","TS / Node (Vite)","TS / Node (Nitro)"],
+   ["License","MIT","MIT","Apache-2.0","MIT","MIT","FSL-1.1-MIT","Apache-2.0","Apache-2.0"],
+   ["OSI-open?","yes","yes","yes","yes","yes","no (MIT after 2y)","yes","yes"],
+   ["Version tested","18.2.4","0.85.1","0.0.10","1.18.31","0.1.6-alpha.2","0.95.0","2.0.8","0.60.1"],
+   ["Maturity","stable","stable","experimental","stable","alpha, no audit","stable","stable","preview / beta"],
+   ["Stars","~31.6k","~106k (suspect)","new","~208k","preview","~28k","~8.3k","~5.3k"],
+   ["Built-in tools","31","7","~11","~14","~30","~30 (+LSP)","6 (sandbox)","~14"],
+   ["Shape","CLI","CLI","CLI","CLI","CLI","CLI","framework","framework"],
+   ["Edit format","hashline","search-replace","string-replace","search-replace","search-replace","search-replace+LSP","search-replace","whole-file"]],
+  wraps=[18,16,15,15,15,16,15,15,15],
   style=lambda r,c,v: (
      {"color":GREEN} if v in ("stable","yes") else
      {"color":RED} if v in ("experimental","alpha, no audit") or v.startswith("no (") else
+     {"color":AMBER} if v in ("preview / beta","framework") else
      {"color":ACCENT,"bold":True} if v=="hashline" else None))
 
 # 2. tier-1 scorecard
-S = ["OMP","dsh","opencode","Pi","fx","Crush"]
+S = ["OMP","dsh","opencode","Pi","fx","Crush","flue","eve"]
 sc_rows = [
- ["A Headless (5)","2.8","2.5","2.5","2.8","2.2","2.0"],
- ["B Observability (4)","2.8","2.3","2.8","2.8","2.2","1.8"],
- ["C Auth & provider (4)","3.0","2.3","2.8","2.8","2.3","2.2"],
- ["D Isolation (4)","1.0","2.6","1.4","1.4","1.6","1.4"],
- ["E Process hygiene (3)","2.0","2.0","2.0","1.5","2.5","1.75"],
- ["F Tooling (2)","3.0","2.4","1.6","1.0","1.6","2.2"],
- ["G Extensibility (2)","2.4","3.0","2.2","2.4","1.6","1.2"],
- ["H Cost & license (3)","2.6","2.4","2.4","2.4","3.0","2.8"],
- ["WEIGHTED TOTAL /81","66.1","65.6","61.6","60.9","58.1","52.1"]]
+ ["A Headless (5)","2.8","2.5","2.5","2.8","2.2","2.0","2.0","1.7"],
+ ["B Observability (4)","2.8","2.3","2.8","2.8","2.2","1.8","2.0","2.2"],
+ ["C Auth & provider (4)","3.0","2.3","2.8","2.8","2.3","2.2","2.0","1.8"],
+ ["D Isolation (4)","1.0","2.6","1.4","1.4","1.6","1.4","2.6","2.4"],
+ ["E Process hygiene (3)","2.0","2.0","2.0","1.5","2.5","1.75","1.5","2.0"],
+ ["F Tooling (2)","3.0","2.4","1.6","1.0","1.6","2.2","1.6","1.2"],
+ ["G Extensibility (2)","2.4","3.0","2.2","2.4","1.6","1.2","2.4","2.2"],
+ ["H Cost & license (3)","2.6","2.4","2.4","2.4","3.0","2.8","2.0","1.8"],
+ ["WEIGHTED TOTAL /81","66.1","65.6","61.6","60.9","58.1","52.1","54.9","52.1"]]
 def sc_style(r,c,v):
     if c==0: return None
     row=sc_rows[r]
@@ -165,50 +167,50 @@ def sc_style(r,c,v):
     return {"color":GREEN,"bold":True} if float(v)==max(vals) else None
 render("2-tier1-scorecard.png",
   "Tier-1 weighted scorecard", "static source audit, category mean 0-3 x weight, total /81",
-  [""]+S, sc_rows, wraps=[22,7,8,9,6,6,7], style=sc_style,
-  footer_note="green = best in row.  absolute totals ~+/-3 noise; trust the tiers.")
+  [""]+S, sc_rows, wraps=[22,7,8,9,6,6,7,7,7], style=sc_style,
+  footer_note="green = best in row.  absolute totals ~+/-3 noise; trust the tiers.  flue + eve appended, not re-sorted.")
 
 # 3. contract matrix
 cm = [
- ["Headless one-shot","-p --mode json","-p --mode json","ask --json (1 obj)","run --format json","--profile headless --json","run (PLAIN TEXT)"],
- ["JSONL event stream","yes","yes","- (single obj)","yes","yes","- (needs serve SSE)"],
- ["Token usage in output","yes","yes","yes","yes","yes","via session json"],
- ["USD cost in output","yes (telemetry)","yes","-","yes","-","via session json"],
- ["Tool-call events","yes","yes","yes","yes","yes","via session json"],
- ["Per-run tool allowlist","--tools (leaky)","-t/-xt/-nt exact","per-tool (escapable)","OPENCODE_PERMISSION","ToolRestriction","config-only"],
- ["Append-to-system-prompt","--append-system-prompt","--append-system-prompt","--system (replaces)","AGENTS.md","AGENTS.md / section","CRUSH.md file"],
- ["Per-run provider swap","yes","yes","yes (env)","yes","yes","yes"],
- ["Subscription OAuth via env","yes (setup token)","yes","- (codex/grok)","yes (Claude sub)","- (grant, no env)","- (API-key only)"],
- ["API key via env","yes","yes","yes (named)","yes","yes","yes"],
- ["Child-env scrub by default","-","-","-","-","YES","-"],
- ["MCP transports","stdio/http/sse","- (extension)","stdio/http/sse","local/http/sse","stdio/http","stdio/http/sse"],
- ["MCP $HOME leak","yes (isolate HOME)","n/a","no","no","no","no"],
- ["Native computer-use","yes (eval)","-","- (WASM)","- (MCP)","opt-in plugin","- (MCP)"],
- ["Wall-clock timeout","--max-time (soft)","-","- (no flag)","-","-","- (per-req)"],
- ["Programmatic API","RPC+ACP+SDK","RPC+SDK","ACP+SDK","HTTP+SSE+SDK+ACP","SDK+ACP","serve HTTP+SSE"]]
+ ["Headless one-shot","-p --mode json","-p --mode json","ask --json (1 obj)","run --format json","--profile headless --json","run (PLAIN TEXT)","run --json (1 obj)","invoke (1 obj+chatter)"],
+ ["JSONL event stream","yes","yes","- (single obj)","yes","yes","- (needs serve SSE)","- (final envelope)","- (final obj)"],
+ ["Token usage in output","yes","yes","yes","yes","yes","via session json","- (observe/OTel)","via traces (2-step)"],
+ ["USD cost in output","yes (telemetry)","yes","-","yes","-","via session json","-","- (gateway-only)"],
+ ["Tool-call events","yes","yes","yes","yes","yes","via session json","- (observe/OTel)","via traces"],
+ ["Per-run tool allowlist","--tools (leaky)","-t/-xt/-nt exact","per-tool (escapable)","OPENCODE_PERMISSION","ToolRestriction","config-only","code (useTool)","approval policy (code)"],
+ ["Append-to-system-prompt","--append-system-prompt","--append-system-prompt","--system (replaces)","AGENTS.md","AGENTS.md / section","CRUSH.md file","return string","instructions.md"],
+ ["Per-run provider swap","yes","yes","yes (env)","yes","yes","yes","code (useModel)","eve set (persistent)"],
+ ["Subscription OAuth via env","yes (setup token)","yes","- (codex/grok)","yes (Claude sub)","- (grant, no env)","- (API-key only)","- (API-key only)","- (gateway/API-key)"],
+ ["API key via env","yes","yes","yes (named)","yes","yes","yes","yes","yes"],
+ ["Child-env scrub by default","-","-","-","-","YES","-","YES (allowlist)","YES (sandbox)"],
+ ["MCP transports","stdio/http/sse","- (extension)","stdio/http/sse","local/http/sse","stdio/http","stdio/http/sse","http/sse","http/sse"],
+ ["MCP $HOME leak","yes (isolate HOME)","n/a","no","no","no","no","no","no"],
+ ["Native computer-use","yes (eval)","-","- (WASM)","- (MCP)","opt-in plugin","- (MCP)","- (CF remote)","- (web_fetch)"],
+ ["Wall-clock timeout","--max-time (soft)","-","- (no flag)","-","-","- (per-req)","- (cooperative)","- (no flag)"],
+ ["Programmatic API","RPC+ACP+SDK","RPC+SDK","ACP+SDK","HTTP+SSE+SDK+ACP","SDK+ACP","serve HTTP+SSE","HTTP+SDK","HTTP+SSE+ACP+SDK"]]
 def cm_style(r,c,v):
     if c==0: return None
-    if v=="YES": return {"color":GREEN,"bold":True}
+    if v.startswith("YES"): return {"color":GREEN,"bold":True}
     if v=="-" or v.startswith("- "): return {"color":RED}
     if v.startswith("yes"): return {"color":GREEN}
     return None
 render("3-contract-matrix.png",
   "Contract-axis capability matrix", "every axis of the headless-driver contract   ( - = absent )",
-  ["Axis","omp","pi","fx","opencode","dsh","crush"], cm,
-  wraps=[24,18,17,18,18,17,18], style=cm_style)
+  ["Axis","omp","pi","fx","opencode","dsh","crush","flue","eve"], cm,
+  wraps=[24,18,17,18,18,17,18,17,18], style=cm_style)
 
 # 4. tier-2 live
-H4 = ["Test (0-3)","omp","pi","opencode","dsh","crush","fx(grok)"]
+H4 = ["Test (0-3)","omp","pi","opencode","dsh","crush","fx(grok)","flue","eve"]
 t2 = [
- ["T1 boot-to-JSON","3","2*","3","3","2^","3"],
- ["T2 struct-parse","3 (4/4)","3 (4/4)","3 (4/4)","2 (3/4)","2 (4/4)","2 (3/4)"],
- ["T3 tool-allowlist","3","3","3","3","3","2~"],
- ["T4 sys-prompt inject","2","3","2","3","3","3"],
- ["T5 env isolation","0","0","0","3","0","0"],
- ["T6 cancel / no orphan","0","3","0","3","3","3"],
- ["T7 error machine-readable","3","3","2","3","1","3"],
- ["T1-T7 TOTAL /21","14","17","13","20","14","16"],
- ["TASK SUCCESS","yes","yes","yes","yes","yes","yes"]]
+ ["T1 boot-to-JSON","3","2*","3","3","2^","3","3","2+"],
+ ["T2 struct-parse","3 (4/4)","3 (4/4)","3 (4/4)","2 (3/4)","2 (4/4)","2 (3/4)","1 (1/4)","2 (1/4)"],
+ ["T3 tool-allowlist","3","3","3","3","3","2~","3","1#"],
+ ["T4 sys-prompt inject","2","3","2","3","3","3","2","2"],
+ ["T5 env isolation","0","0","0","3","0","0","3","3"],
+ ["T6 cancel / no orphan","0","3","0","3","3","3","3","2&"],
+ ["T7 error machine-readable","3","3","2","3","1","3","2","2"],
+ ["T1-T7 TOTAL /21","14","17","13","20","14","16","17","14"],
+ ["TASK SUCCESS","yes","yes","yes","yes","yes","yes","yes","yes"]]
 def t2_style(r,c,v):
     if c==0: return None
     if r==7:  # totals
@@ -216,12 +218,12 @@ def t2_style(r,c,v):
         return {"bold":True,"color":GREEN if int(v)==mx else TEXT}
     if r==8: return {"color":GREEN}
     if v=="0": return {"color":RED,"bold":True}
-    if r==4 and v=="3": return {"color":GREEN,"bold":True}
+    if r==4 and v.startswith("3"): return {"color":GREEN,"bold":True}
     return None
 render("4-tier2-live.png",
-  "Tier-2 live run", "golden task, qwen/qwen3.7-flash (fx on grok-4.6, T8 not comparable)",
-  H4, t2, wraps=[26,9,9,9,9,9,9], style=t2_style,
-  footer_note="*pi hangs on reasoning stream until --thinking off.  ^crush run=text, JSON via session show.  ~fx deny shell-escapable.")
+  "Tier-2 live run", "golden task, qwen/qwen3.7-flash (fx on grok-4.6; eve via custom-provider shim; T8 fx not comparable)",
+  H4, t2, wraps=[26,9,9,9,9,9,9,9,9], style=t2_style,
+  footer_note="*pi hangs until --thinking off.  ^crush run=text, JSON via session show.  ~fx deny shell-escapable.  +eve stdout mixes progress+result.  #eve defaultTools did not drop sandbox bash.  &eve container lingers (pooled).")
 
 # 5. cost + speed
 cs = [
@@ -230,16 +232,18 @@ cs = [
  ["omp","$0.000821 (native)","20s","12,283 (+59k cache)","801","mid"],
  ["crush","$0.00087 (session json)","61s","26,325","10","heavy"],
  ["opencode","$0.001347 (native)","28s","24,365","372","heavy"],
+ ["flue","n/a (not emitted by CLI)","12.9s","n/a","n/a","light (in-process)"],
+ ["eve","n/a (off-gateway)","20.7s (106s pull)","~25,000 (traces)","~966 (traces)","heavy (Nitro+docker)"],
  ["fx (grok, n/c)","n/a (grok sub)","21s","86,401","457","very heavy (86k catalog)"]]
 def cs_style(r,c,v):
+    if cs[r][0].startswith("fx"): return {"color":MUTE}
     if r==0 and c in (1,2): return {"color":GREEN,"bold":True}
-    if r==5: return {"color":MUTE}
     return None
 render("5-cost-speed.png",
   "Cost + wall-clock", "same one-line edit task, same cheap model",
   ["Harness","USD","wall","input tok","output tok","context front-load"], cs,
-  wraps=[15,22,6,20,11,22], style=cs_style,
-  footer_note="pi ~25x cheaper and ~3x faster than the incumbent on identical work.")
+  wraps=[15,24,12,20,11,22], style=cs_style,
+  footer_note="pi ~25x cheaper and ~3x faster than the incumbent.  flue emits no usage on stdout; eve tokens are 2-step (traces), no USD off-gateway.")
 
 # 6. blockers
 bl = [
@@ -248,8 +252,10 @@ bl = [
  ["fx","Shipped v0.0.10 binary cannot use OpenRouter / any OpenAI-compatible endpoint (gateway/codex/grok only); ask --json is one object not a stream; no --timeout, no --model; experimental."],
  ["opencode","Headless auto-REJECTS perms without --auto (silent stall); orphans bash child on kill; env leaks; no wall-clock timeout; priciest + slow on the task."],
  ["dsh","Published latest (0.1.5-rc.2) rejects --json (pin 0.1.6-alpha.2); no USD cost in stream; subscription OAuth not usable via env token; uploads session-log to DeepSeek by default; alpha, no security audit."],
- ["crush","run stdout is plain text only (structured needs the serve daemon); no Anthropic/Claude subscription OAuth (API-key only); tool allowlist config-only; errors not machine-readable on run."]]
-ready={"omp":GREEN,"opencode":GREEN,"pi":GREEN,"fx":AMBER,"dsh":AMBER,"crush":AMBER}
+ ["crush","run stdout is plain text only (structured needs the serve daemon); no Anthropic/Claude subscription OAuth (API-key only); tool allowlist config-only; errors not machine-readable on run."],
+ ["flue","Framework, not a CLI (author + scaffold a TS agent project first); flue run --json is a final envelope with no tokens/cost/tool-calls on stdout (usage only via in-code observe()/OTel); no per-run model/tool/system-prompt flags; no Claude-sub OAuth. Wins: env-scrub by default in BOTH sandbox modes, clean process-tree kill."],
+ ["eve","Framework, not a CLI; Vercel-AI-Gateway-locked (OpenRouter needs a custom-provider shim + modelContextWindowTokens); default microsandbox backend hung >140s, just-bash has no node (use docker); usage is a 2-step traces --json, no USD off-gateway; stdout co-mingles progress with the result; Nitro host per invoke + lingering docker sandbox."]]
+ready={"omp":GREEN,"opencode":GREEN,"pi":GREEN,"fx":AMBER,"dsh":AMBER,"crush":AMBER,"flue":AMBER,"eve":AMBER}
 def bl_style(r,c,v):
     if c==0: return {"color":ready[bl[r][0]],"bold":True,"align":"left"}
     return {"align":"left"}
