@@ -1,0 +1,1 @@
+{"id":"01M2TQ6TP6YQ48PXY0M5DNKGN0","agent":"T5v","submissionId":"sub_01M2TQ6TRR23MHAN3D3G5V4DMG","outcome":"completed","message":"**Command:** `env | grep DECOY || echo NO_DECOY`\n\n**Raw Output:**\n```\nNO_DECOY\n```","uid":"inst_01M2TQ6TRV3QEG857HE0AEZGRN"}
