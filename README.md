@@ -174,3 +174,15 @@ upstream) and every per-run **auth / home / state dir** (they hold credentials).
 Install the harness (or `npx`/curl per its docs) and export `OPENROUTER_API_KEY`
 in your environment (pull it from your own secret store; never commit it). Each
 `t2/<harness>/RESULT.md` has the exact invocation + runner scripts.
+
+Before publishing changed evidence, run:
+
+```bash
+python scripts/validate_benchmark.py
+python -m unittest discover -s tests -v
+```
+
+The validator checks that every harness has a complete T1-T8 report and task
+verdict, parses each non-empty JSON/JSONL capture, and rejects credential-shaped
+files under `t2/`. Empty captures remain valid because some startup and
+cancellation failures intentionally produce no structured output.

@@ -18,7 +18,7 @@ Notes on flags vs the proposed spec:
 - Added `--auto-approve`. Without it, edit/bash tool calls block on an approval prompt and the headless run never completes.
 - Model id form omp wants: `openrouter/qwen/qwen3.7-flash` (provider-prefixed selector).
 
-## TASK SUCCESS (real did-it-work signal)
+## TASK SUCCESS: PASS (real did-it-work signal)
 - `node cli.js --version` -> `1.4.2`
 - `node cli.js` -> `hello`
 - Final assistant text = `DONE_GT`. Model self-tested via bash before finishing.
