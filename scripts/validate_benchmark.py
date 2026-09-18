@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 
-HARNESSES = ("omp", "pi", "fx", "opencode", "dsh", "crush")
+HARNESSES = ("omp", "pi", "fx", "opencode", "dsh", "crush", "flue", "eve")
 SENSITIVE_NAMES = {
     ".env",
     "auth.json",

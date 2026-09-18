@@ -1,0 +1,16 @@
+{
+  "status": "ready",
+  "outcome": {
+    "status": "completed",
+    "message": "bash"
+  },
+  "resume": {
+    "session": {
+      "sessionId": "wrun_01M2TR44G0WNW9AF8QBRJF0ZKT",
+      "streamIndex": 45
+    },
+    "target": {
+      "kind": "local"
+    }
+  }
+}

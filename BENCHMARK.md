@@ -1,8 +1,12 @@
 # Agent-loop harness benchmark - control-plane fit
 
-Ranks 6 candidate agent-loop harnesses (Pi, OMP, fx, opencode, dsh, Crush) for the
-role **omp currently plays inside a control plane**: a loop the control plane drives as a
-headless child and whose output it parses, scopes, and publishes. This is NOT a
+Ranks 8 candidate agent-loop harnesses (Pi, OMP, fx, opencode, dsh, Crush, and the
+two frameworks flue + eve) for the role **omp currently plays inside a control plane**:
+a loop the control plane drives as a headless child and whose output it parses, scopes,
+and publishes. flue (withastro) and eve (vercel) are frameworks, not drop-in CLIs: a
+control plane must author + scaffold a TypeScript agent project before it can drive
+`flue run` / `eve invoke`; they are scored on the same axis with the scaffold held
+constant. This is NOT a
 "best coding agent for a human at a keyboard" benchmark. The whole scoring axis is
 *orchestratability by a control plane*, derived from the real integration contract
 a control plane imposes on the loop it drives.
@@ -124,17 +128,21 @@ scope + estimate before running, not kick it off unprompted.
 Cells = category mean (0-3) from the per-criterion scores. Weighted total =
 sum(mean x weight), max 81. Ranked left to right.
 
-| Cat (wt) | OMP | dsh | opencode | Pi | fx | Crush |
-|----------|:---:|:---:|:--------:|:--:|:--:|:-----:|
-| A Headless (5)      | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 |
-| B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 |
-| C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 |
-| D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 |
-| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 |
-| F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 |
-| G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 |
-| H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 |
-| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** |
+| Cat (wt) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve |
+|----------|:---:|:---:|:--------:|:--:|:--:|:-----:|:--:|:--:|
+| A Headless (5)      | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 | 2.0 | 1.7 |
+| B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
+| C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
+| D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 | 2.6 | 2.4 |
+| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 | 1.5 | 2.0 |
+| F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
+| G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
+| H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
+| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** | **54.9** | **52.1** |
+
+flue + eve (frameworks, added after the original six) are appended right; they are
+not re-sorted into the ranked order. Their per-criterion detail is in
+[t2/flue/RESULT.md](t2/flue/RESULT.md) and [t2/eve/RESULT.md](t2/eve/RESULT.md).
 
 **Calibration caveat.** Absolute totals carry roughly +/-3 of noise from
 judgment-call scoring, so trust the ORDINAL TIERS and the per-category gap
@@ -213,6 +221,36 @@ Two ranks matter, because capability and readiness diverge sharply here:
    embedding but not resale. Best only if you specifically want the shared-session
    multi-client `serve` model.
 
+### flue 54.9 and eve 52.1 (frameworks, added after the original six)
+
+Both are *frameworks you build an agent app with*, not binaries a control plane shells
+out to. Scored on the same axis, they land mid-pack: strong on isolation, weak on the
+driver contract. Full per-test evidence in [t2/flue/RESULT.md](t2/flue/RESULT.md) and
+[t2/eve/RESULT.md](t2/eve/RESULT.md).
+
+- **flue 54.9** (withastro/flue, v2.0.8, Apache-2.0, ~8.3k stars, TS/Node+Vite). A
+  `'use agent'` TS module driven by `flue run --json`; OpenRouter worked first try.
+  Runtime test **17/21** (ties Pi). Standouts: **scrubs child env by default in BOTH
+  the virtual and `local()` sandbox** (only dsh matched this in the field) and does a
+  **clean process-tree kill** on cancel (T6=3, where omp/opencode orphan). Three gaps:
+  (1) `flue run --json` is a final envelope with **no tokens/cost/tool-calls on stdout**
+  (they exist only via in-process `observe()`/OTel), so a driver that parses stdout is
+  blind to usage; (2) no per-run model/tool/system-prompt CLI flags and **no
+  Claude-sub OAuth** (all code+env); (3) remote/cloud sandboxes keep running after a
+  local kill and the timeout is cooperative, not a hard `--max-time`.
+- **eve 52.1** (vercel/eve, v0.60.1, Apache-2.0, ~5.3k stars, TS/Node+Nitro+Workflows).
+  A filesystem-first durable-workflow agent driven by `eve invoke`. Runtime test
+  **14/21**, task success on the `docker` backend (real node, self-verified). Standouts:
+  real **docker/microVM sandbox isolation** (T5=3), no `$HOME` MCP leak, credentials
+  excluded from output. Three gaps: (1) **Vercel-AI-Gateway-locked** - `eve init
+  --model openrouter/...` is rejected; OpenRouter needs a custom-provider shim +
+  `modelContextWindowTokens` override, and there is no Claude-sub OAuth; (2)
+  observability is a **2-step `traces --json`** retrieval (no inline usage, no JSONL,
+  no USD off-gateway) and stdout co-mingles `eve:` progress with the result object; (3)
+  operationally heavy - the default `microsandbox` backend **hung >140s** without infra,
+  `just-bash` has no real `node`, and it boots a Nitro host per `invoke` while leaving a
+  pooled docker sandbox container `Up`. Same gated-out class as fx: track, do not adopt.
+
 ### Corrections to the original brief (verified against source)
 
 - **fx is Zig, not TypeScript** (6.17 MiB native binary, Apache-2.0, v0.0.10).
@@ -273,22 +311,29 @@ cost/wall is NOT comparable.
 
 ### Results (T1-T7 scored 0-3; T8 measured)
 
-| Test | omp | pi | opencode | dsh | crush | fx(grok) |
-|------|:--:|:--:|:--:|:--:|:--:|:--:|
-| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 |
-| T2 struct-parse | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) |
-| T3 tool-allowlist | 3 | 3 | 3 | 3 | 3 | 2~ |
-| T4 sysprompt-inject | 2 | 3 | 2 | 3 | 3 | 3 |
-| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 |
-| T6 cancel/no-orphan | 0 | 3 | 0 | 3 | 3 | 3 |
-| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 |
-| **T1-T7 total /21** | **14** | **17** | **13** | **20** | **14** | **16** |
-| TASK SUCCESS | yes | yes | yes | yes | yes | yes |
+| Test | omp | pi | opencode | dsh | crush | fx(grok) | flue | eve |
+|------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 | 3 | 2+ |
+| T2 struct-parse | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) | 1 (1/4) | 2 (1/4)@ |
+| T3 tool-allowlist | 3 | 3 | 3 | 3 | 3 | 2~ | 3 | 1# |
+| T4 sysprompt-inject | 2 | 3 | 2 | 3 | 3 | 3 | 2 | 2 |
+| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 | **3** | **3** |
+| T6 cancel/no-orphan | 0 | 3 | 0 | 3 | 3 | 3 | **3** | 2& |
+| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 | 2 | 2 |
+| **T1-T7 total /21** | **14** | **17** | **13** | **20** | **14** | **16** | **17** | **14** |
+| TASK SUCCESS | yes | yes | yes | yes | yes | yes | yes | yes |
 
 `*` pi HANGS forever on qwen's reasoning stream; passes only with `--thinking off`.
 `^` crush `run` stdout is plain text; JSON needs the 2-step `crush session show
 <id> --json`. `~` fx tool-deny is shell-escapable (model reroutes via un-denied
 `shell` unless you also deny shell/bash).
+`+` eve stdout co-mingles `eve:` progress rows with the final JSON object. `@` eve
+tokens+tool-calls need a 2nd `eve traces --json` keyed by sessionId; no USD
+off-gateway. `#` eve `defaultTools:false` did not drop the sandbox `bash` (real
+control is the per-tool approval policy in code). `&` eve `invoke` cancels clean with
+no host orphan, but the docker sandbox container lingers (pooled; reap separately).
+flue and eve ran on the same OpenRouter model as the cohort; eve required a
+custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway-only.
 
 ### Cost + wall-clock (golden task, qwen; fx excluded)
 
@@ -299,6 +344,8 @@ cost/wall is NOT comparable.
 | omp | $0.000821 (native) | 20s | 12,283(+59k cache) | 801 | mid |
 | crush | $0.00087 (via session json) | 61s | 26,325 | 10* | heavy |
 | opencode | $0.001347 (native) | 28s | 24,365 | 372 | heavy |
+| flue | n/a (not emitted by CLI) | **12.9s** | n/a | n/a | light (in-process) |
+| eve | n/a (no USD off-gateway) | 20.7s (106s w/ pull) | ~25,000 (traces) | ~966 (traces) | heavy (Nitro + docker) |
 | fx(grok) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (skill catalog) |
 
 pi is ~25x cheaper and ~3x faster than the incumbent on the same task; the input-

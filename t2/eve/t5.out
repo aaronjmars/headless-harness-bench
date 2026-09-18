@@ -1,0 +1,19 @@
+eve: opening sandbox session "root" on backend "docker"...
+eve: starting sandbox command: env | grep DECOY || echo NO_DECOY
+eve: sandbox command finished (exit 0): env | grep DECOY || echo NO_DECOY
+{
+  "status": "ready",
+  "outcome": {
+    "status": "completed",
+    "message": "DONE_T5"
+  },
+  "resume": {
+    "session": {
+      "sessionId": "wrun_01M2TQNBG172QXQ2ERNX81HHRQ",
+      "streamIndex": 41
+    },
+    "target": {
+      "kind": "local"
+    }
+  }
+}

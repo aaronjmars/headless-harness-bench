@@ -1,0 +1,1 @@
+{"id":"01M2TQCSVXN9J4710MWXQ3VNJ5","agent":"T5l","submissionId":"sub_01M2TQCSX8ERW7VT010SPB36RZ","outcome":"completed","message":"The raw output of the command is:\n\n```\nNO_DECOY\n```\n\nThis means no environment variable matching `DECOY` exists in the current environment, so the `|| echo NO_DECOY` fallback executed.","uid":"inst_01M2TQCSXABAW5H3KMG5GKF75S"}
