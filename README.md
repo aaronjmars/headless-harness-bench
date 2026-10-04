@@ -33,7 +33,7 @@ Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **ds
 | Language / runtime | TS + Rust / Bun | TS / Node 22+ | Zig (native 6 MiB) | TS / Bun | TS / Node 22+ (+Py wheel) | Go (native) | TS / Node 22+ (Vite) | TS / Node (Nitro) |
 | License | MIT | MIT | Apache-2.0 | MIT | MIT | FSL-1.1-MIT | Apache-2.0 | Apache-2.0 |
 | OSI-open? | yes | yes | yes | yes | yes | no (MIT after 2y) | yes | yes |
-| Version tested | 18.2.4 | 0.85.1 | 0.0.10 | 1.18.31 | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 |
+| Version tested | 18.2.4 (live run: 18.2.0) | 0.85.1 | 0.0.10 | 1.18.31 (live run: 1.18.30) | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 |
 | Maturity | stable | stable | **experimental** | stable | **alpha, no audit** | stable | stable (2.x) | **preview / beta** |
 | Stars | ~31.6k | ~106k (suspect) | new | ~208k | preview | ~28k | ~8.3k | ~5.3k |
 | Repo | can1357/oh-my-pi | earendil-works/pi | vercel-labs/fx | sst/opencode | deepseek-ai/deepseek-harness | charmbracelet/crush | withastro/flue | vercel/eve |
@@ -52,13 +52,15 @@ Category mean 0-3 x weight; total /81. Roughly ordered by total (flue/eve append
 | B Structured observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
 | C Auth & multi-provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
 | D Isolation & secret hygiene (4) | 1.0 | **2.6** | 1.4 | 1.4 | 1.6 | 1.4 | **2.6** | 2.4 |
-| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 | 1.5 | 2.0 |
+| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
 | F Tooling power (2) | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
 | G Extensibility (2) | 2.4 | **3.0** | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
 | H Cost & license (3) | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** | **54.9** | **52.1** |
+| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
 
 Absolute totals carry ~+/-3 noise; trust the tiers and the per-axis findings below.
+Totals come from the unrounded per-criterion scores, so recomputing them from the
+rounded category means shown here can differ by up to ~0.4.
 
 ## 3. Contract-axis capability matrix
 
@@ -121,16 +123,16 @@ process-tree kill (T6); its `--json` carries no tokens/cost/tool-calls (T2).
 
 | Harness | USD | wall | input tok | output tok | context front-load |
 |---|--:|--:|--:|--:|---|
-| **pi** | **$0.0000347** | **6.1s** | 329 (+4427 cache) | 2 | leanest |
-| dsh | $0.00033 (computed, no native USD) | 27s | 9,447 | 357 | lean |
+| **pi** | **$0.000263** | **6.1s** | 5,154 (+11.8k cache) | 289 | leanest |
+| dsh | $0.00048 (computed, no native USD) | 27s | 9,447 (+25k cache) | 357 | lean |
 | omp | $0.000821 (native) | 20s | 12,283 (+59k cache) | 801 | mid |
 | crush | $0.00087 (via session json) | 61s | 26,325 | 10* | heavy |
 | opencode | $0.001347 (native) | 28s | 24,365 | 372 | heavy |
 | flue | n/a (not emitted by CLI) | **12.9s** | not emitted | not emitted | light (in-process) |
-| eve | n/a (no USD off-gateway) | 20.7s (106s w/ image pull) | ~25,000 (via traces) | ~966 (via traces) | heavy (Nitro host + docker) |
+| eve | n/a (no USD off-gateway) | 20.7s (106s w/ image pull) | 21,896 (via traces) | 831 (via traces) | heavy (Nitro host + docker) |
 | fx (grok, n/c) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (86k skill catalog) |
 
-pi is ~25x cheaper and ~3x faster than the incumbent on the same task. fx injects
+pi is ~3x cheaper and ~3x faster than the incumbent on the same task. fx injects
 an 86k-token skill catalog even for a one-line edit; pi front-loads almost nothing.
 flue emits no usage on stdout at all (instrument the agent to get it); eve's tokens
 come only from a 2nd `traces --json` call and it carries no USD off the gateway.
@@ -161,10 +163,11 @@ Three axes decide the order:
    opencode / Pi have it; fx gives one object, dsh omits cost, crush needs a daemon.
 2. **Subscription-OAuth via a durable env token** (a control plane runs on the Claude sub, no
    API key): OMP / opencode / Pi only. fx / dsh / crush cannot meet it.
-3. **Containment**: only **dsh** scrubs child env by default; the incumbent OMP is
-   the worst (env leak + foreign-MCP-from-`$HOME`). Everyone else leaks too, so
-   the control plane's env-allowlist + isolated-`$HOME` + process-group-kill layer stays
-   load-bearing for every harness except dsh.
+3. **Containment**: of the six CLIs only **dsh** scrubs child env by default; the
+   incumbent OMP is the worst (env leak + foreign-MCP-from-`$HOME`). The other CLIs
+   leak too, so the control plane's env-allowlist + isolated-`$HOME` +
+   process-group-kill layer stays load-bearing for every CLI except dsh. The two
+   frameworks also isolate (flue scrubs env, eve runs a docker sandbox).
 
 **Net:** OMP remains the right incumbent. **opencode** is the one realistic swap to
 head-to-head against it. **dsh** is the best-architected of the six and tops the raw

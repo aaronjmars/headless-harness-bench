@@ -126,7 +126,8 @@ scope + estimate before running, not kick it off unprompted.
 ## Scorecard (Tier-1, static source audit)
 
 Cells = category mean (0-3) from the per-criterion scores. Weighted total =
-sum(mean x weight), max 81. Ranked left to right.
+sum(mean x weight), max 81. Ranked left to right. Totals use the unrounded
+per-criterion means, so recomputing from the rounded cells can differ by up to ~0.4.
 
 | Cat (wt) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve |
 |----------|:---:|:---:|:--------:|:--:|:--:|:-----:|:--:|:--:|
@@ -134,11 +135,11 @@ sum(mean x weight), max 81. Ranked left to right.
 | B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
 | C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
 | D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 | 2.6 | 2.4 |
-| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 | 1.5 | 2.0 |
+| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
 | F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
 | G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
 | H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** | **54.9** | **52.1** |
+| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
 
 flue + eve (frameworks, added after the original six) are appended right; they are
 not re-sorted into the ranked order. Their per-criterion detail is in
@@ -208,9 +209,10 @@ Two ranks matter, because capability and readiness diverge sharply here:
    MCP/LSP/browser) and process hygiene (no global `--max-time`, detached bash
    pgroups risk orphans). It IS omp's upstream, so "adopt Pi" ~= "run omp without
    the IDE"; the delta omp adds is exactly F + the containment story.
-5. **fx 58.1** *(experimental)* - lightest footprint (6 MiB Zig binary,
-   Apache-2.0) and best cancellation (`--timeout` hard deadline + ACP
-   `session/cancel`). But `fx ask --json` emits one final object not a stream, no
+5. **fx 56.6** *(experimental)* - lightest footprint (6 MiB Zig binary,
+   Apache-2.0) and clean cancellation (ACP `session/cancel`; the Tier-2 run found
+   no `--timeout` flag on the shipped v0.0.10 `fx ask`, so E1 max-time drops from 3
+   to 1 and E from 2.5 to 2.0; total was 58.1). But `fx ask --json` emits one final object not a stream, no
    fine tool allowlist (full vs read_only), no Claude-sub OAuth, no real browser,
    and it is v0.0.10. Structured streaming needs the ACP path (real work).
 6. **Crush 52.1** - polished, but the worst structural fit: `crush run` is
@@ -255,7 +257,7 @@ driver contract. Full per-test evidence in [t2/flue/RESULT.md](t2/flue/RESULT.md
 
 - **fx is Zig, not TypeScript** (6.17 MiB native binary, Apache-2.0, v0.0.10).
 - **opencode is 100% TypeScript/Bun now** - the Go TUI was rewritten; 0 Go files.
-- **OMP is TypeScript + Rust on Bun, not pure Rust** (MIT, v18.2.4, 31.6k stars);
+- **OMP is TypeScript + Rust on Bun, not pure Rust** (MIT, v18.2.4 source audited; the Tier-2 live run used the v18.2.0 binary, 31.6k stars);
   README's "80k-line Rust core" is own-crates, measured 262k incl vendored shell.
 - **Pi's repo moved to `earendil-works/pi`** (MIT, v0.85.1); the ~106k star count
   is suspicious and worth a manual check.
@@ -276,7 +278,7 @@ cannot easily paper over:
   Claude-sub OAuth; fx/Crush/dsh do not. the control plane's "run on the Claude sub, no API
   key" invariant is a hard filter that eliminates half the field for the primary
   provider.
-- **Containment splits the field** (D): five of six ship NO child-env allowlist and
+- **Containment splits the field** (D): five of the six CLIs ship NO child-env allowlist and
   leak the parent env to tools, relying on the caller to scrub the process env -
   the incumbent OMP is the worst (env leak PLUS foreign-MCP-from-`$HOME`). The lone
   exception is **dsh**, which scrubs `KEY|SECRET|TOKEN|PASSWORD` + `DSH_*` by
@@ -300,7 +302,7 @@ durable env token, so the CI Claude-sub path cannot be met). **Crush fails (3)**
 `serve`-daemon-only) and the auth invariant. This is why the deploy-today rank
 collapses to OMP > opencode > Pi.
 
-## Tier-2 (dynamic) - RUN, all 6
+## Tier-2 (dynamic) - RUN, all 8
 
 Golden task ("add a `--version` flag to cli.js, print DONE_GT") run through each
 harness headless on **`qwen/qwen3.7-flash` via OpenRouter**, isolated fixture per
@@ -339,16 +341,16 @@ custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway
 
 | Harness | USD | wall | in tok | out tok | context front-load |
 |---------|----:|-----:|-------:|--------:|--------------------|
-| **pi** | **$0.0000347** | **6.1s** | 329(+4427 cache) | 2 | leanest |
-| dsh | $0.00033 (computed, no native USD) | 27s | 9,447 | 357 | lean |
+| **pi** | **$0.000263** | **6.1s** | 5,154(+11.8k cache) | 289 | leanest |
+| dsh | $0.00048 (computed, no native USD) | 27s | 9,447(+25k cache) | 357 | lean |
 | omp | $0.000821 (native) | 20s | 12,283(+59k cache) | 801 | mid |
 | crush | $0.00087 (via session json) | 61s | 26,325 | 10* | heavy |
 | opencode | $0.001347 (native) | 28s | 24,365 | 372 | heavy |
 | flue | n/a (not emitted by CLI) | **12.9s** | n/a | n/a | light (in-process) |
-| eve | n/a (no USD off-gateway) | 20.7s (106s w/ pull) | ~25,000 (traces) | ~966 (traces) | heavy (Nitro + docker) |
+| eve | n/a (no USD off-gateway) | 20.7s (106s w/ pull) | 21,896 (traces) | 831 (traces) | heavy (Nitro + docker) |
 | fx(grok) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (skill catalog) |
 
-pi is ~25x cheaper and ~3x faster than the incumbent on the same task; the input-
+pi is ~3x cheaper and ~3x faster than the incumbent on the same task; the input-
 token column shows how much context each harness front-loads (fx injects an 86k
 skill catalog even for a one-line edit; pi front-loads almost nothing).
 
@@ -376,7 +378,8 @@ the caller MUST kill the process group - which the caller must do).
 The headline dimension - **env isolation (T5)** - split exactly as predicted: only
 **dsh** scrubbed secrets from the child (`FAKE_API_TOKEN`, `DECOY_SECRET`,
 `DSH_DECOY` all gone; only the pattern-free `DECOY_PLAIN` leaked); the other five
-leaked the full parent env. This is the one place the newest design beats the
+CLIs leaked the full parent env. The frameworks added later (flue, eve) also
+isolate, see their section. This is the one place the newest design beats the
 incumbent live.
 
 ### Net effect on the ranking

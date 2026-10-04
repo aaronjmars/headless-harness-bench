@@ -23,13 +23,13 @@ OPENROUTER_API_KEY=$OPENROUTER_API_KEY PI_CODING_AGENT_DIR=.../t2/pi/.pi \
 | # | Test | Score | Evidence |
 |---|------|-------|----------|
 | T1 | Boot-to-JSON | **as-specified FAIL / with `--thinking off` PASS** | Default spec: 0 JSONL in 509s (hang). With `--thinking off`: 101 well-formed JSONL events, `stopReason:"stop"`, final `DONE_GT`. Event stream: `session, agent_start, turn_start, message_start/end, message_update, tool_execution_start/update/end, turn_end, agent_end, agent_settled`. |
-| T2 | Structured-parse | **4/4** | From golden JSONL: (1) final text `"DONE_GT"`; (2) tokens `usage.input`/`output`/`totalTokens` = 329/2/**4427**; (3) USD `usage.cost.total` = **3.4706e-05**; (4) ordered tool calls via `tool_execution_start` + message `toolCall.name`: `read -> read -> edit -> bash`. Also `stopReason`, per-tool `toolResults[].isError`. |
+| T2 | Structured-parse | **4/4** | From golden JSONL: (1) final text `"DONE_GT"`; (2) tokens `usage.input`/`output`/`totalTokens` per assistant turn, summed over the 4 turns = 5154/289/**17219** (+11776 cacheRead); (3) USD `usage.cost.total` summed = **2.628e-04**; (4) ordered tool calls via `tool_execution_start` + message `toolCall.name`: `read -> read -> edit -> bash`. Also `stopReason`, per-tool `toolResults[].isError`. |
 | T3 | Tool-allowlist honored | **PASS (3/3)** | Re-run with `-t read` on the edit task: **only `read` calls fired (23x), zero edit/write/bash**. `fixture_t3/cli.js` **unchanged** (`console.log("hello")`). Model text: "Let me write the updated cli.js" but had no edit tool; looped reads until Alibaba upstream aborted (`stopReason:"error"`, "Repetitive tool calls detected"). Exact allowlist enforced client-side. |
 | T4 | System-prompt injection | **PASS** | `--append-system-prompt "...SENTINEL_9Z..."` -> final text = `"ready\n\nSENTINEL_9Z"`. Sentinel present. |
 | T5 | Env isolation | **LEAK = YES** | `DECOY_SECRET=leakme9Z` + bash `env | grep DECOY` -> toolResult text `"DECOY_SECRET=leakme9Z\n"`. Pi's bash tool inherits the full parent environment; secrets leak into tool subprocesses. |
 | T6 | Cancellation / orphan | **ORPHAN = NO (plain kill suffices)** | Model ran `sleep 129` via bash tool. Child sleep (pid 17167) is in its **own process group** (pgid 17166 != pi pgid 17037, `same_group=no`), pi is its ancestor. A **plain `kill -TERM <pi-pid>`** (not the group) killed the sleep within 3s -> no orphan. Pi's `signalCleanupHandlers` (print-mode.ts) dispose the runtime + child tree on SIGTERM. **Tree-kill NOT required.** |
 | T7 | Cascade/error shape | **machine-readable** | Bad model id (good key): `message_end` assistant `stopReason:"error"`, `errorMessage='400: {"message":"qwen/this-model-does-not-exist-9z is not a valid model ID","code":400}'`, `agent_end.willRetry=false`. Bad key: `stopReason:"error"`, `errorMessage='401: {"message":"User not found.","code":401}'`, `willRetry=false`. Both fail **fast**. Note: pi process **exits 0** even on error in `--mode json` (error surfaced via `stopReason`, not exit code; text mode exits 1). |
-| T8 | Cost / wall-clock | see below | Golden: in/out/total tokens **329/2/4427**, cost **$3.47e-05** (`usage.cost.total`, incl. cacheRead 4096 tok), agent-exec **~6.1s** (msg timestamps). |
+| T8 | Cost / wall-clock | see below | Golden (summed over 4 assistant turns): in/out/total tokens **5154/289/17219**, cost **$2.63e-04** (`usage.cost.total`, incl. cacheRead 11776 tok), agent-exec **~6.1s** (session event to last message_end timestamp; excludes process boot). |
 
 ## TASK SUCCESS - PASS
 Golden edit landed correctly (`edit` toolResult: "Successfully replaced 1 block(s)"). Verified by running the file:
@@ -40,13 +40,13 @@ Edited `cli.js` reads `package.json` version via `fs.readFileSync(path.join(__di
 ## TOTALS (scored runs, `--thinking off`)
 | run | tokens (total) | cost USD | agent-exec | outcome |
 |-----|----|----|----|----|
-| golden (read,edit,bash) | 4427 | 3.47e-05 | 6.1s | stop, DONE_GT, task OK |
-| T3 (read-only) | n/a (upstream error) | ~0 | 33.1s | error (repetitive reads; no edit) |
+| golden (read,edit,bash) | 17219 | 2.63e-04 | 6.1s | stop, DONE_GT, task OK |
+| T3 (read-only) | 98241 (23 read turns) | 1.15e-03 | 33.1s | error (repetitive reads; no edit) |
 | T4 (sysprompt) | 484 | 1.53e-05 | <1s | stop, SENTINEL present |
-| T5 (env) | 3447 | 2.85e-05 | 1.7s | stop, decoy leaked |
+| T5 (env) | 6847 | 1.34e-04 | 1.7s | stop, decoy leaked |
 | T7 badmodel | 0 | 0 | <1s | error 400, willRetry=false |
 | T7 badkey | 0 | 0 | <1s | error 401, willRetry=false |
-Cost source = pi's own `usage.cost.total` (per-event). Model is cheap; dominant cost was cacheRead in golden.
+Cost source = pi's own `usage.cost.total`, reported per assistant message and summed across turns (`analyze.py`). An earlier version of `analyze.py` kept only the last turn's usage, which under-reported golden at 329/2/4427 tokens and $3.47e-05. Model is cheap; dominant cost was cacheRead in golden.
 
 ## NOTES / GOTCHAS
 - No `--cwd` flag; pi uses process cwd - run from inside the fixture.
