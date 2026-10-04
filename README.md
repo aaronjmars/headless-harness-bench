@@ -52,11 +52,11 @@ Category mean 0-3 x weight; total /81. Roughly ordered by total (flue/eve append
 | B Structured observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
 | C Auth & multi-provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
 | D Isolation & secret hygiene (4) | 1.0 | **2.6** | 1.4 | 1.4 | 1.6 | 1.4 | **2.6** | 2.4 |
-| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 | 1.5 | 2.0 |
+| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
 | F Tooling power (2) | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
 | G Extensibility (2) | 2.4 | **3.0** | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
 | H Cost & license (3) | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** | **54.9** | **52.1** |
+| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
 
 Absolute totals carry ~+/-3 noise; trust the tiers and the per-axis findings below.
 Totals come from the unrounded per-criterion scores, so recomputing them from the

@@ -135,11 +135,11 @@ per-criterion means, so recomputing from the rounded cells can differ by up to ~
 | B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
 | C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
 | D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 | 2.6 | 2.4 |
-| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.5 | 1.75 | 1.5 | 2.0 |
+| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
 | F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
 | G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
 | H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **58.1** | **52.1** | **54.9** | **52.1** |
+| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
 
 flue + eve (frameworks, added after the original six) are appended right; they are
 not re-sorted into the ranked order. Their per-criterion detail is in
@@ -209,9 +209,10 @@ Two ranks matter, because capability and readiness diverge sharply here:
    MCP/LSP/browser) and process hygiene (no global `--max-time`, detached bash
    pgroups risk orphans). It IS omp's upstream, so "adopt Pi" ~= "run omp without
    the IDE"; the delta omp adds is exactly F + the containment story.
-5. **fx 58.1** *(experimental)* - lightest footprint (6 MiB Zig binary,
+5. **fx 56.6** *(experimental)* - lightest footprint (6 MiB Zig binary,
    Apache-2.0) and clean cancellation (ACP `session/cancel`; the Tier-2 run found
-   no `--timeout` flag on the shipped v0.0.10 `fx ask`, so its E=2.5 is optimistic). But `fx ask --json` emits one final object not a stream, no
+   no `--timeout` flag on the shipped v0.0.10 `fx ask`, so E1 max-time drops from 3
+   to 1 and E from 2.5 to 2.0; total was 58.1). But `fx ask --json` emits one final object not a stream, no
    fine tool allowlist (full vs read_only), no Claude-sub OAuth, no real browser,
    and it is v0.0.10. Structured streaming needs the ACP path (real work).
 6. **Crush 52.1** - polished, but the worst structural fit: `crush run` is
