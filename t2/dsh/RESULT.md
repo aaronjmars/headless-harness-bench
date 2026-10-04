@@ -75,8 +75,8 @@ Differentiator: only a var whose **name** carries none of KEY/PASSWORD/SECRET/TO
 
 ### T8 numbers (golden run)
 - Wall-clock: **27 s** (end-to-end, includes model latency).
-- Tokens (summed over `step_end.usage`): input **9,447**, output **357**, cacheRead 25,472 (prompt caching hit ~90% of context on turns 2-4). Final cumulative `totalTokens`=9,010.
-- USD cost: **dsh emits none.** Computed = (9447*0.03 + 357*0.13)/1e6 = **$0.00033** (formula ignores OpenRouter's cheaper cache-read tier, so real cost is slightly lower).
+- Tokens (summed over `step_end.usage`): input **9,447**, output **357**, cacheRead **25,472** (prompt caching hit ~90% of context on turns 2-4). Final cumulative `totalTokens`=9,010.
+- USD cost: **dsh emits none.** Computed = (9447*0.03 + 357*0.13 + 25472*0.006)/1e6 = **$0.00048** (per-million prices for qwen3.7-flash on OpenRouter: input $0.03, output $0.13, cache read $0.006, the same rates pi reports per token). An earlier version left out the 25,472 cache-read tokens and gave $0.00033.
 
 ## Notes / gotchas
 - Headless `--help` hides `--json`/`--session-id`; found them in `src/startup.ts`.
