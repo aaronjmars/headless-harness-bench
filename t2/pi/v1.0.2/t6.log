@@ -1,0 +1,10 @@
+pi_pid=70409 pi_pgid=70342
+real_sleep_after=3s pid=70567
+=== real sleep proc + ancestry ===
+  PID  PPID  PGID COMMAND
+70567 70566 70566 sleep 129
+sleep_pgid=70566 pi_pgid=70342 same_group=no
+pi_is_ancestor_of_sleep=yes
+=== plain SIGTERM to pi 70409 only (kill -TERM $PI, not the group) ===
+ORPHAN=NO real sleep 70567 died when pi got SIGTERM
+T6_DONE

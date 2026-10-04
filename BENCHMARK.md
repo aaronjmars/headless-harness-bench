@@ -259,7 +259,7 @@ driver contract. Full per-test evidence in [t2/flue/RESULT.md](t2/flue/RESULT.md
 - **opencode is 100% TypeScript/Bun now** - the Go TUI was rewritten; 0 Go files.
 - **OMP is TypeScript + Rust on Bun, not pure Rust** (MIT, v18.2.4 source audited; the Tier-2 live run used the v18.2.0 binary, 31.6k stars);
   README's "80k-line Rust core" is own-crates, measured 262k incl vendored shell.
-- **Pi's repo moved to `earendil-works/pi`** (MIT, v0.85.1); the ~106k star count
+- **Pi's repo moved to `earendil-works/pi`** (MIT, v0.85.1 audited; Tier-2 re-run on v1.0.2 with identical verdicts); the ~106k star count
   is suspicious and worth a manual check.
 - **dsh is a v0.1.6-alpha developer preview** with no security audit.
 - OMP is the only one of the 6 with **native computer-use** (desktop control), as
@@ -341,7 +341,7 @@ custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway
 
 | Harness | USD | wall | in tok | out tok | context front-load |
 |---------|----:|-----:|-------:|--------:|--------------------|
-| **pi** | **$0.000263** | **6.1s** | 5,154(+11.8k cache) | 289 | leanest |
+| **pi** | **$0.000228** | **7.0s** | 4,097(+10.8k cache) | 310 | leanest |
 | dsh | $0.00048 (computed, no native USD) | 27s | 9,447(+25k cache) | 357 | lean |
 | omp | $0.000821 (native) | 20s | 12,283(+59k cache) | 801 | mid |
 | crush | $0.00087 (via session json) | 61s | 26,325 | 10* | heavy |
@@ -350,7 +350,7 @@ custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway
 | eve | n/a (no USD off-gateway) | 20.7s (106s w/ pull) | 21,896 (traces) | 831 (traces) | heavy (Nitro + docker) |
 | fx(grok) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (skill catalog) |
 
-pi is ~3x cheaper and ~3x faster than the incumbent on the same task; the input-
+pi is ~3.5x cheaper and ~3x faster than the incumbent on the same task; the input-
 token column shows how much context each harness front-loads (fx injects an 86k
 skill catalog even for a one-line edit; pi front-loads almost nothing).
 
