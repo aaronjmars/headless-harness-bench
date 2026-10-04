@@ -1,0 +1,3 @@
+error: invalid value 'qwen/qwen3.7-flash' for '--model <MODEL>': invalid model "qwen/qwen3.7-flash"; expected gpt-6-astra, gpt-6.1-sol, gpt-6-luna, @cf/zai-org/glm-5.3, kimi-k3, or mimo-v2.6-pro
+
+For more information, try '--help'.

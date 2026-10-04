@@ -1,0 +1,9 @@
+nx_pid=80921 nx_pgid=80839
+real_sleep_after=8s pid=81062
+  PID  PPID  PGID COMMAND
+81062 80921 81062 sleep 129
+sleep_pgid=81062 nx_pgid=80839 same_group=no
+=== plain SIGTERM to nanocodex 80921 only ===
+nx exited
+ORPHAN=NO sleep 81062 died with nanocodex
+T6_DONE

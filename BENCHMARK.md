@@ -1,7 +1,7 @@
 # Agent-loop harness benchmark - control-plane fit
 
-Ranks 8 candidate agent-loop harnesses (Pi, OMP, fx, opencode, dsh, Crush, and the
-two frameworks flue + eve) for the role **omp currently plays inside a control plane**:
+Ranks 9 candidate agent-loop harnesses (Pi, OMP, fx, opencode, dsh, Crush, nanocodex,
+and the two frameworks flue + eve) for the role **omp currently plays inside a control plane**:
 a loop the control plane drives as a headless child and whose output it parses, scopes,
 and publishes. flue (withastro) and eve (vercel) are frameworks, not drop-in CLIs: a
 control plane must author + scaffold a TypeScript agent project before it can drive
@@ -129,19 +129,19 @@ Cells = category mean (0-3) from the per-criterion scores. Weighted total =
 sum(mean x weight), max 81. Ranked left to right. Totals use the unrounded
 per-criterion means, so recomputing from the rounded cells can differ by up to ~0.4.
 
-| Cat (wt) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve |
-|----------|:---:|:---:|:--------:|:--:|:--:|:-----:|:--:|:--:|
-| A Headless (5)      | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 | 2.0 | 1.7 |
-| B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
-| C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
-| D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 | 2.6 | 2.4 |
-| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
-| F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
-| G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
-| H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
+| Cat (wt) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve | nanocodex |
+|----------|:---:|:---:|:--------:|:--:|:--:|:-----:|:--:|:--:|:--:|
+| A Headless (5)      | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 | 2.0 | 1.7 | 2.2 |
+| B Observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 | 2.8 |
+| C Auth/provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 | 2.2 |
+| D Isolation (4)     | 1.0 | 2.6 | 1.4 | 1.4 | 1.6 | 1.4 | 2.6 | 2.4 | 1.8 |
+| E Process (3)       | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 | 2.5 |
+| F Tooling (2)       | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 | 1.8 |
+| G Extensibility (2) | 2.4 | 3.0 | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 | 2.8 |
+| H Cost/license (3)  | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 | 2.6 |
+| **Weighted total**  | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** | **62.5** |
 
-flue + eve (frameworks, added after the original six) are appended right; they are
+flue + eve (frameworks) and nanocodex (CLI, added 2026-10-04) were added after the original six and are appended right; they are
 not re-sorted into the ranked order. Their per-criterion detail is in
 [t2/flue/RESULT.md](t2/flue/RESULT.md) and [t2/eve/RESULT.md](t2/eve/RESULT.md).
 
@@ -253,6 +253,59 @@ driver contract. Full per-test evidence in [t2/flue/RESULT.md](t2/flue/RESULT.md
   `just-bash` has no real `node`, and it boots a Nitro host per `invoke` while leaving a
   pooled docker sandbox container `Up`. Same gated-out class as fx: track, do not adopt.
 
+### nanocodex 62.5 (CLI, added 2026-10-04)
+
+gakonst/nanocodex v0.6.6 (Apache-2.0 / MIT, ~550 stars, Rust, 92 MB native binary). A
+clean-room Rust reimplementation of OpenAI Codex (no codex-rs crates vendored;
+behavior pinned to specific openai/codex commits, `docs/codex-shared-contracts.md`),
+with a Claude Messages harness alongside. Driven by `nanocodex run "<prompt>"`, which
+streams JSONL. Full live evidence in [t2/nanocodex/RESULT.md](t2/nanocodex/RESULT.md).
+Source line refs are at commit `c54051c` (the live run used the v0.6.6 release binary).
+Per-criterion scores (0-3):
+
+- **A 2.2**: A1 3 (`run` exits 0 with a terminal `run.completed`), A2 3 (arg), A3 2
+  (`--instructions` replaces, AGENTS.md appends, no append flag; `bin/nanocodex/src/config.rs:203`),
+  A4 1 (no per-run allowlist; only toggles for web search / image gen / subagents,
+  `config.rs:207-231`; exact sets need the SDK `.tools(...)`), A5 3 (no approval gate
+  headless), A6 1 (no stdin/@file prompt).
+- **B 2.8**: B1 3 (one flushed JSONL record per event, `bin/nanocodex/src/run.rs:208-226`),
+  B2 3 (per-call usage), B3 2 (`cost_usd` + `estimated_cost` in the terminal event, but
+  client-estimated from a built-in price table, `cost_status:"estimated_from_usage"`,
+  `crates/nanocodex-agent/src/model/telemetry.rs:270-283`), B4 3 (`tool.call`/`tool.result`),
+  B5 3 (`run.error` + `run.failed` with `error_class`, rc=1), B6 3.
+- **C 2.2**: C1 1 (closed model enum: gpt-6.1-sol, gpt-6-luna, gpt-6-astra, glm-5.3,
+  kimi-k3, mimo-v2.6-pro, `crates/nanocodex-oai-api/src/lib.rs:249-263`; a base URL +
+  model-id prefix reach OpenRouter but only for those ids), C2 3 (`CODEX_HOME`,
+  `NANOCODEX_AUTH_FILE`), C3 2 (ChatGPT auth file or `CODEX_ACCESS_TOKEN`, Business /
+  Enterprise only; Claude via `NANOCODEX_CLAUDE_AUTH_FILE`), C4 3, C5 2 (`--model` /
+  `--harness`, closed list), C6 2.
+- **D 1.8**: D1 2 (`env_clear` + secret-name denylist, values masked in tool output,
+  `crates/nanocodex-oai-tools/src/shell/process.rs:244,475-541`; no caller allowlist),
+  D2 1 (`--mcp-codex-config` and `--mcp-defaults` default **true**: loads
+  `$CODEX_HOME/config.toml` MCP servers + a public catalog), D3 2 (plain-named vars and
+  the cwd `.env`, auto-loaded by `dotenvy`, reach the shell), D4 2 (opt-in libkrun VM
+  `--vm`; macOS computer-use auto-provisioned unless `NANOCODEX_COMPUTER=off`), D5 2
+  (no key in output, but INFO traces with full model input go to stderr by default).
+- **E 2.5**: E1 1 (no wall-clock flag), E2 3 (SIGTERM ends the run with
+  `status:"cancelled"`), E3 3 (shell children in their own group, kill-on-drop,
+  `process.rs:248-251`), E4 3 (live T6: no orphan).
+- **F 1.8**: F1 2 (5 standard tools + Code Mode + web search, image gen, subagents),
+  F2 2 (`apply_patch` with a grammar), F3 0 (no LSP), F4 2 (stdio + streamable HTTP),
+  F5 3 (native computer-use + browser).
+- **G 2.8**: G1 2 (extension crates, no runtime plugin loader), G2 3 (Codex or Claude
+  harness, SDK), G3 3 (subagents), G4 3 (SDK tools + MCP), G5 3 (Code Mode).
+- **H 2.6**: H1 3 (single native binary), H2 2 (release binary is a plain download;
+  the official installer starts an interactive setup + hourly updater), H3 3
+  (macOS/Linux/Windows), H4 3, H5 2 (92 MB binary, ~6k-token default prompt).
+
+**Why qwen could not run.** The CLI rejects any model outside its enum before sending a
+request. Rewriting the model id in a local proxy (`t2/nanocodex/model_rewrite_proxy.py`)
+gets the request to qwen, but Code Mode always exposes its `exec` tool as a freeform
+Responses `custom` tool, and Alibaba (qwen's OpenRouter provider) rejects it with
+`'function' is a required property ... 'tools.0'` (`t2/nanocodex/qwen_blocked.jsonl`).
+There is no flag to turn Code Mode off. The live run therefore used
+`xiaomi/mimo-v2.6-pro` on the same OpenRouter key, like fx on grok.
+
 ### Corrections to the original brief (verified against source)
 
 - **fx is Zig, not TypeScript** (6.17 MiB native binary, Apache-2.0, v0.0.10).
@@ -302,7 +355,7 @@ durable env token, so the CI Claude-sub path cannot be met). **Crush fails (3)**
 `serve`-daemon-only) and the auth invariant. This is why the deploy-today rank
 collapses to OMP > opencode > Pi.
 
-## Tier-2 (dynamic) - RUN, all 8
+## Tier-2 (dynamic) - RUN, all 9
 
 Golden task ("add a `--version` flag to cli.js, print DONE_GT") run through each
 harness headless on **`qwen/qwen3.7-flash` via OpenRouter**, isolated fixture per
@@ -313,17 +366,17 @@ cost/wall is NOT comparable.
 
 ### Results (T1-T7 scored 0-3; T8 measured)
 
-| Test | omp | pi | opencode | dsh | crush | fx(grok) | flue | eve |
-|------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 | 3 | 2+ |
-| T2 struct-parse | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) | 1 (1/4) | 2 (1/4)@ |
-| T3 tool-allowlist | 3 | 3 | 3 | 3 | 3 | 2~ | 3 | 1# |
-| T4 sysprompt-inject | 2 | 3 | 2 | 3 | 3 | 3 | 2 | 2 |
-| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 | **3** | **3** |
-| T6 cancel/no-orphan | 0 | 3 | 0 | 3 | 3 | 3 | **3** | 2& |
-| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 | 2 | 2 |
-| **T1-T7 total /21** | **14** | **17** | **13** | **20** | **14** | **16** | **17** | **14** |
-| TASK SUCCESS | yes | yes | yes | yes | yes | yes | yes | yes |
+| Test | omp | pi | opencode | dsh | crush | fx(grok) | flue | eve | nanocodex(mimo) |
+|------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 | 3 | 2+ | 3 |
+| T2 struct-parse | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) | 1 (1/4) | 2 (1/4)@ | 3 (4/4) |
+| T3 tool-allowlist | 3 | 3 | 3 | 3 | 3 | 2~ | 3 | 1# | 1% |
+| T4 sysprompt-inject | 2 | 3 | 2 | 3 | 3 | 3 | 2 | 2 | 3 |
+| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 | **3** | **3** | **3**$ |
+| T6 cancel/no-orphan | 0 | 3 | 0 | 3 | 3 | 3 | **3** | 2& | 3 |
+| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 | 2 | 2 | 3 |
+| **T1-T7 total /21** | **14** | **17** | **13** | **20** | **14** | **16** | **17** | **14** | **19** |
+| TASK SUCCESS | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 
 `*` pi HANGS forever on qwen's reasoning stream; passes only with `--thinking off`.
 `^` crush `run` stdout is plain text; JSON needs the 2-step `crush session show
@@ -334,6 +387,10 @@ tokens+tool-calls need a 2nd `eve traces --json` keyed by sessionId; no USD
 off-gateway. `#` eve `defaultTools:false` did not drop the sandbox `bash` (real
 control is the per-tool approval policy in code). `&` eve `invoke` cancels clean with
 no host orphan, but the docker sandbox container lingers (pooled; reap separately).
+`%` nanocodex has no per-run tool allowlist (only toggles for extras; shell + patch
+always on). `$` nanocodex scrubs secret-named vars but a plain-named var and the cwd
+`.env` (auto-loaded) reach the shell, the same pattern as dsh. nanocodex ran on
+`xiaomi/mimo-v2.6-pro` (qwen blocked, see below), so its T8 is not comparable.
 flue and eve ran on the same OpenRouter model as the cohort; eve required a
 custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway-only.
 
@@ -349,6 +406,7 @@ custom-provider shim in `agent.ts` because its default path is Vercel-AI-Gateway
 | flue | n/a (not emitted by CLI) | **12.9s** | n/a | n/a | light (in-process) |
 | eve | n/a (no USD off-gateway) | 20.7s (106s w/ pull) | 21,896 (traces) | 831 (traces) | heavy (Nitro + docker) |
 | fx(grok) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (skill catalog) |
+| nanocodex(mimo, n/c) | $0.0020 (client-estimated) | 33s | 35,157 (incl. 33.3k cache) | 1,210 | mid (~6k-token prompt) |
 
 pi is ~3.5x cheaper and ~3x faster than the incumbent on the same task; the input-
 token column shows how much context each harness front-loads (fx injects an 86k

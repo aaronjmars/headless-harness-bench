@@ -1,12 +1,13 @@
 # headless-harness-bench
 
-Benchmark comparing 8 coding-agent harnesses for the role of a **headless agent
+Benchmark comparing 9 coding-agent harnesses for the role of a **headless agent
 loop driven by a control plane**: another program drives it as a child and parses,
 scopes, and publishes its output. Scoring axis is *orchestratability by a control
 plane*, not human-at-a-keyboard UX.
 
 Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **dsh**
-(DeepSeek Harness), **crush** (Charmbracelet), **flue** (Astro), **eve** (Vercel).
+(DeepSeek Harness), **crush** (Charmbracelet), **flue** (Astro), **eve** (Vercel),
+**nanocodex** (gakonst, a Rust reimplementation of Codex).
 
 > **flue + eve are frameworks, not drop-in CLIs.** Unlike the first six (invoke a
 > binary, pass flags), a control plane must first author + scaffold a TypeScript
@@ -21,42 +22,47 @@ Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **ds
   best-in-class secret hygiene (env-scrub / sandbox isolation, no `$HOME` MCP leak) but
   lose on the driver contract - no per-turn JSONL on stdout, no per-run CLI overrides,
   no Claude-sub OAuth. Neither is a deploy-today swap; both are worth tracking.
-- All 8 completed the golden task once wired. The order is about auth fit, structured
+- **nanocodex (added 2026-10-04) scores 62.5 / 81 and 19/21 live**, the best driver
+  contract of the CLIs (one-process JSONL with tokens, USD and typed errors, env scrub,
+  clean cancel), but it fails the deploy gate: pre-1.0, a closed model list that
+  cannot run the cohort's qwen model, no per-run tool allowlist, and default-on
+  loaders that read `$CODEX_HOME` MCP config and the cwd `.env`.
+- All 9 completed the golden task once wired. The order is about auth fit, structured
   output, isolation, maturity, and cost - not raw ability.
 - Full reasoning + file:line citations in **[BENCHMARK.md](BENCHMARK.md)**; this
   README carries every finding as tables.
 
 ## 1. Identity + distribution
 
-| | omp | pi | fx | opencode | dsh | crush | flue | eve |
-|---|---|---|---|---|---|---|---|---|
-| Language / runtime | TS + Rust / Bun | TS / Node 22+ | Zig (native 6 MiB) | TS / Bun | TS / Node 22+ (+Py wheel) | Go (native) | TS / Node 22+ (Vite) | TS / Node (Nitro) |
-| License | MIT | MIT | Apache-2.0 | MIT | MIT | FSL-1.1-MIT | Apache-2.0 | Apache-2.0 |
-| OSI-open? | yes | yes | yes | yes | yes | no (MIT after 2y) | yes | yes |
-| Version tested | 18.2.4 (live run: 18.2.0) | 1.0.2 (first run: 0.85.1) | 0.0.10 | 1.18.31 (live run: 1.18.30) | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 |
-| Maturity | stable | stable | **experimental** | stable | **alpha, no audit** | stable | stable (2.x) | **preview / beta** |
-| Stars | ~31.6k | ~106k (suspect) | new | ~208k | preview | ~28k | ~8.3k | ~5.3k |
-| Repo | can1357/oh-my-pi | earendil-works/pi | vercel-labs/fx | sst/opencode | deepseek-ai/deepseek-harness | charmbracelet/crush | withastro/flue | vercel/eve |
-| Install | binary (curl/brew/npm) | npm / bun-binary | curl (native) | npm/curl (bun-binary) | npm / npx / py-wheel | brew/npm (Go binary) | npm (@flue/cli) | npm (eve) |
-| Built-in tools | 31 | 7 | ~11 | ~14 | ~30 | ~30 (+LSP ops) | 6 (via sandbox) | ~14 |
-| Edit format | **hashline** | search-replace | string-replace | search-replace (+apply_patch/GPT) | search-replace | search-replace + LSP | search-replace (edit) | **whole-file** (write_file) |
-| Shape | CLI | CLI | CLI | CLI | CLI | CLI | **framework** | **framework** |
+| | omp | pi | fx | opencode | dsh | crush | flue | eve | nanocodex |
+|---|---|---|---|---|---|---|---|---|---|
+| Language / runtime | TS + Rust / Bun | TS / Node 22+ | Zig (native 6 MiB) | TS / Bun | TS / Node 22+ (+Py wheel) | Go (native) | TS / Node 22+ (Vite) | TS / Node (Nitro) | Rust (native, 92 MB) |
+| License | MIT | MIT | Apache-2.0 | MIT | MIT | FSL-1.1-MIT | Apache-2.0 | Apache-2.0 | Apache-2.0 / MIT |
+| OSI-open? | yes | yes | yes | yes | yes | no (MIT after 2y) | yes | yes | yes |
+| Version tested | 18.2.4 (live run: 18.2.0) | 1.0.2 (first run: 0.85.1) | 0.0.10 | 1.18.31 (live run: 1.18.30) | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 | 0.6.6 |
+| Maturity | stable | stable | **experimental** | stable | **alpha, no audit** | stable | stable (2.x) | **preview / beta** | pre-1.0, fast-moving |
+| Stars | ~31.6k | ~106k (suspect) | new | ~208k | preview | ~28k | ~8.3k | ~5.3k | ~550 |
+| Repo | can1357/oh-my-pi | earendil-works/pi | vercel-labs/fx | sst/opencode | deepseek-ai/deepseek-harness | charmbracelet/crush | withastro/flue | vercel/eve | gakonst/nanocodex |
+| Install | binary (curl/brew/npm) | npm / bun-binary | curl (native) | npm/curl (bun-binary) | npm / npx / py-wheel | brew/npm (Go binary) | npm (@flue/cli) | npm (eve) | release binary (curl/npm/cargo) |
+| Built-in tools | 31 | 7 | ~11 | ~14 | ~30 | ~30 (+LSP ops) | 6 (via sandbox) | ~14 | 5 + Code Mode (+web/image/subagents) |
+| Edit format | **hashline** | search-replace | string-replace | search-replace (+apply_patch/GPT) | search-replace | search-replace + LSP | search-replace (edit) | **whole-file** (write_file) | `apply_patch` (grammar) |
+| Shape | CLI | CLI | CLI | CLI | CLI | CLI | **framework** | **framework** | CLI |
 
 ## 2. Tier-1 weighted scorecard (static source audit)
 
-Category mean 0-3 x weight; total /81. Roughly ordered by total (flue/eve appended).
+Category mean 0-3 x weight; total /81. Roughly ordered by total (flue/eve/nanocodex appended).
 
-| Category (weight) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve |
-|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| A Headless orchestratability (5) | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 | 2.0 | 1.7 |
-| B Structured observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 |
-| C Auth & multi-provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 |
-| D Isolation & secret hygiene (4) | 1.0 | **2.6** | 1.4 | 1.4 | 1.6 | 1.4 | **2.6** | 2.4 |
-| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 |
-| F Tooling power (2) | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 |
-| G Extensibility (2) | 2.4 | **3.0** | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 |
-| H Cost & license (3) | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 |
-| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** |
+| Category (weight) | OMP | dsh | opencode | Pi | fx | Crush | flue | eve | nanocodex |
+|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| A Headless orchestratability (5) | 2.8 | 2.5 | 2.5 | 2.8 | 2.2 | 2.0 | 2.0 | 1.7 | 2.2 |
+| B Structured observability (4) | 2.8 | 2.3 | 2.8 | 2.8 | 2.2 | 1.8 | 2.0 | 2.2 | 2.8 |
+| C Auth & multi-provider (4) | 3.0 | 2.3 | 2.8 | 2.8 | 2.3 | 2.2 | 2.0 | 1.8 | 2.2 |
+| D Isolation & secret hygiene (4) | 1.0 | **2.6** | 1.4 | 1.4 | 1.6 | 1.4 | **2.6** | 2.4 | 1.8 |
+| E Cancellation & process hygiene (3) | 2.0 | 2.0 | 2.0 | 1.5 | 2.0 | 1.75 | 1.5 | 2.0 | 2.5 |
+| F Tooling power (2) | 3.0 | 2.4 | 1.6 | 1.0 | 1.6 | 2.2 | 1.6 | 1.2 | 1.8 |
+| G Extensibility (2) | 2.4 | **3.0** | 2.2 | 2.4 | 1.6 | 1.2 | 2.4 | 2.2 | 2.8 |
+| H Cost & license (3) | 2.6 | 2.4 | 2.4 | 2.4 | 3.0 | 2.8 | 2.0 | 1.8 | 2.6 |
+| **Weighted total /81** | **66.1** | **65.6** | **61.6** | **60.9** | **56.6** | **52.1** | **54.9** | **52.1** | **62.5** |
 
 Absolute totals carry ~+/-3 noise; trust the tiers and the per-axis findings below.
 Totals come from the unrounded per-criterion scores, so recomputing them from the
@@ -66,24 +72,24 @@ rounded category means shown here can differ by up to ~0.4.
 
 Every axis of the headless-driver contract, per harness. "-" = absent.
 
-| Axis | omp | pi | fx | opencode | dsh | crush | flue | eve |
-|---|---|---|---|---|---|---|---|---|
-| Headless one-shot | `-p --mode json` | `-p --mode json` | `ask --json` (1 obj) | `run --format json` | `--profile headless --json` | `run` (PLAIN TEXT) | `run --json` (1 obj) | `invoke` (1 obj + chatter) |
-| JSONL event stream | yes | yes | - (single obj) | yes | yes | - (needs `serve` SSE) | - (final envelope) | - (final obj; HTTP `/stream`) |
-| Token usage in output | yes | yes | yes | yes | yes | via `session show --json` | - (`observe()`/OTel only) | via `traces --json` (2-step) |
-| **USD cost in output** | yes (telemetry) | yes | **-** | yes | **-** | via `session show --json` | **-** | **-** (gateway-only) |
-| Tool-call events | yes | yes | yes | yes | yes | via `session show --json` | - (`observe()`/OTel only) | via `traces --json` |
-| Per-run tool allowlist | `--tools` (leaky*) | `-t/-xt/-nt` exact | per-tool rules (shell-escapable) | `OPENCODE_PERMISSION` (hard-strip) | `ToolRestriction` allow/deny | config-only | code (`useTool`/sandbox) | approval-policy in code |
-| Append-to-system-prompt | `--append-system-prompt` | `--append-system-prompt` | `--system` (replaces) | AGENTS.md / instructions | AGENTS.md / prompt section | CRUSH.md file | return string / `useInstruction` | instructions.md |
-| Per-run provider/model swap | yes | yes | yes (env) | yes | yes | yes | code (`useModel`) | `eve set` (persistent) |
-| **Subscription OAuth via env token** | **yes** (`setup token`) | yes | - (codex/grok login) | **yes** (Claude sub) | - (grant only, no env) | - (API-key only) | - (API-key only) | - (gateway/API-key) |
-| API key via env | yes | yes | yes (named) | yes | yes | yes | yes | yes |
-| **Child-env scrub by default** | - | - | - | - | **YES** | - | **YES** (allowlist) | **YES** (sandbox) |
-| MCP transports | stdio/http/sse | - (extension) | stdio/http/sse | local/http/sse | stdio/http | stdio/http/sse | http/sse | http/sse |
-| MCP `$HOME` auto-discovery leak | **yes** (needs isolated HOME) | n/a | no | no | no | no | no | no |
-| Native computer-use / browser | **yes** (eval preludes) | - | - (WASM sandbox) | - (MCP) | opt-in plugin | - (MCP) | - (CF Computer remote) | - (web_fetch only) |
-| Wall-clock timeout | `--max-time` (soft) | - | - (no flag) | - | - | - (per-req only) | - (cooperative) | - (no invoke flag) |
-| Programmatic API | RPC + ACP + SDK | RPC + SDK | **ACP** + SDK | HTTP+SSE + SDK + ACP | SDK + ACP | `serve` HTTP+SSE | HTTP + SDK | HTTP+SSE + ACP + SDK |
+| Axis | omp | pi | fx | opencode | dsh | crush | flue | eve | nanocodex |
+|---|---|---|---|---|---|---|---|---|---|
+| Headless one-shot | `-p --mode json` | `-p --mode json` | `ask --json` (1 obj) | `run --format json` | `--profile headless --json` | `run` (PLAIN TEXT) | `run --json` (1 obj) | `invoke` (1 obj + chatter) | `run` (JSONL) |
+| JSONL event stream | yes | yes | - (single obj) | yes | yes | - (needs `serve` SSE) | - (final envelope) | - (final obj; HTTP `/stream`) | yes |
+| Token usage in output | yes | yes | yes | yes | yes | via `session show --json` | - (`observe()`/OTel only) | via `traces --json` (2-step) | yes |
+| **USD cost in output** | yes (telemetry) | yes | **-** | yes | **-** | via `session show --json` | **-** | **-** (gateway-only) | yes (client-estimated) |
+| Tool-call events | yes | yes | yes | yes | yes | via `session show --json` | - (`observe()`/OTel only) | via `traces --json` | yes |
+| Per-run tool allowlist | `--tools` (leaky*) | `-t/-xt/-nt` exact | per-tool rules (shell-escapable) | `OPENCODE_PERMISSION` (hard-strip) | `ToolRestriction` allow/deny | config-only | code (`useTool`/sandbox) | approval-policy in code | - (on/off toggles for extras only) |
+| Append-to-system-prompt | `--append-system-prompt` | `--append-system-prompt` | `--system` (replaces) | AGENTS.md / instructions | AGENTS.md / prompt section | CRUSH.md file | return string / `useInstruction` | instructions.md | AGENTS.md (`--instructions` replaces) |
+| Per-run provider/model swap | yes | yes | yes (env) | yes | yes | yes | code (`useModel`) | `eve set` (persistent) | yes, closed model list |
+| **Subscription OAuth via env token** | **yes** (`setup token`) | yes | - (codex/grok login) | **yes** (Claude sub) | - (grant only, no env) | - (API-key only) | - (API-key only) | - (gateway/API-key) | `CODEX_ACCESS_TOKEN` (ChatGPT Business/Enterprise only) |
+| API key via env | yes | yes | yes (named) | yes | yes | yes | yes | yes | yes |
+| **Child-env scrub by default** | - | - | - | - | **YES** | - | **YES** (allowlist) | **YES** (sandbox) | **YES** (secret-name denylist) |
+| MCP transports | stdio/http/sse | - (extension) | stdio/http/sse | local/http/sse | stdio/http | stdio/http/sse | http/sse | http/sse | stdio/http |
+| MCP `$HOME` auto-discovery leak | **yes** (needs isolated HOME) | n/a | no | no | no | no | no | no | **yes** (`$CODEX_HOME` + public catalog, default on) |
+| Native computer-use / browser | **yes** (eval preludes) | - | - (WASM sandbox) | - (MCP) | opt-in plugin | - (MCP) | - (CF Computer remote) | - (web_fetch only) | yes (macOS, default on) |
+| Wall-clock timeout | `--max-time` (soft) | - | - (no flag) | - | - | - (per-req only) | - (cooperative) | - (no invoke flag) | - |
+| Programmatic API | RPC + ACP + SDK | RPC + SDK | **ACP** + SDK | HTTP+SSE + SDK + ACP | SDK + ACP | `serve` HTTP+SSE | HTTP + SDK | HTTP+SSE + ACP + SDK | SDK (Rust/npm/Py) + HTTP |
 
 `*` omp `--tools` filters builtins but does not flip `restrictToolNames`, so MCP /
 extensions still load unless you also isolate `$HOME` / pass `--no-extensions`.
@@ -94,19 +100,21 @@ Golden task ("add a `--version` flag to a CLI, print DONE_GT") headless on
 **`qwen/qwen3.7-flash` via OpenRouter**. **fx ran on grok-4.6** (its shipped binary
 cannot reach an OpenAI-compatible endpoint), so its T8 is not comparable. **flue and
 eve ran on the same OpenRouter model** (eve via a custom-provider shim - its default
-path is Vercel-AI-Gateway-only, same class as fx).
+path is Vercel-AI-Gateway-only, same class as fx). **nanocodex ran on
+`xiaomi/mimo-v2.6-pro`** via OpenRouter: it rejects qwen (closed model list) and qwen's
+provider rejects its freeform Code Mode tool, so its T8 is not comparable either.
 
-| Test (0-3) | omp | pi | opencode | dsh | crush | fx(grok) | flue | eve |
-|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 | 3 | 2+ |
-| T2 structured-parse (fields/4) | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) | 1 (1/4) | 2 (1/4 inline)@ |
-| T3 tool-allowlist honored | 3 | 3 | 3 | 3 | 3 | 2~ | 3 | 1# |
-| T4 sys-prompt injection | 2 | 3 | 2 | 3 | 3 | 3 | 2 | 2 |
-| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 | **3** | **3** |
-| T6 cancel / no orphan | 0 | 3 | 0 | 3 | 3 | 3 | **3** | 2& |
-| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 | 2 | 2 |
-| **T1-T7 total /21** | 14 | 17 | 13 | **20** | 14 | 16 | **17** | 14 |
-| **TASK SUCCESS** | yes | yes | yes | yes | yes | yes | yes | yes |
+| Test (0-3) | omp | pi | opencode | dsh | crush | fx(grok) | flue | eve | nanocodex(mimo) |
+|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| T1 boot-to-JSON | 3 | 2* | 3 | 3 | 2^ | 3 | 3 | 2+ | 3 |
+| T2 structured-parse (fields/4) | 3 (4/4) | 3 (4/4) | 3 (4/4) | 2 (3/4) | 2 (4/4)^ | 2 (3/4) | 1 (1/4) | 2 (1/4 inline)@ | 3 (4/4) |
+| T3 tool-allowlist honored | 3 | 3 | 3 | 3 | 3 | 2~ | 3 | 1# | 1% |
+| T4 sys-prompt injection | 2 | 3 | 2 | 3 | 3 | 3 | 2 | 2 | 3 |
+| T5 env isolation | 0 | 0 | 0 | **3** | 0 | 0 | **3** | **3** | **3**$ |
+| T6 cancel / no orphan | 0 | 3 | 0 | 3 | 3 | 3 | **3** | 2& | 3 |
+| T7 error machine-readable | 3 | 3 | 2 | 3 | 1 | 3 | 2 | 2 | 3 |
+| **T1-T7 total /21** | 14 | 17 | 13 | **20** | 14 | 16 | **17** | 14 | 19 |
+| **TASK SUCCESS** | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 
 `*` pi hangs on qwen's reasoning stream until `--thinking off`. `^` crush `run` =
 plain text; JSON needs 2-step `session show --json`. `~` fx tool-deny is
@@ -118,8 +126,12 @@ sessionId; no USD off-gateway. `#` eve `defaultTools:false` did not drop the san
 cancels clean with no host orphan, but the docker sandbox container lingers (pooled,
 reap separately). flue's `local()` scrubs host env by default (T5) and does a clean
 process-tree kill (T6); its `--json` carries no tokens/cost/tool-calls (T2).
+`%` nanocodex has no per-run tool allowlist (only on/off toggles for web search, image
+generation, subagents; the shell + patch tools are always on). `$` nanocodex scrubs
+secret-named vars (`DECOY_SECRET`, `FAKE_API_TOKEN` gone) but a plain-named var and the
+cwd `.env` (auto-loaded) still reach the shell, the same pattern as dsh.
 
-### Cost + wall-clock (same task, qwen; fx excluded)
+### Cost + wall-clock (same task, qwen; fx and nanocodex not comparable)
 
 | Harness | USD | wall | input tok | output tok | context front-load |
 |---|--:|--:|--:|--:|---|
@@ -131,6 +143,7 @@ process-tree kill (T6); its `--json` carries no tokens/cost/tool-calls (T2).
 | flue | n/a (not emitted by CLI) | **12.9s** | not emitted | not emitted | light (in-process) |
 | eve | n/a (no USD off-gateway) | 20.7s (106s w/ image pull) | 21,896 (via traces) | 831 (via traces) | heavy (Nitro host + docker) |
 | fx (grok, n/c) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (86k skill catalog) |
+| nanocodex (mimo, n/c) | $0.0020 (client-estimated) | 33s | 35,157 (incl. 33.3k cache) | 1,210 | mid (~6k-token prompt) |
 
 pi is ~3.5x cheaper and ~3x faster than the incumbent on the same task. fx injects
 an 86k-token skill catalog even for a one-line edit; pi front-loads almost nothing.
@@ -149,6 +162,7 @@ come only from a 2nd `traces --json` call and it carries no USD off the gateway.
 | **crush** | `run` stdout is **plain text only** (structured needs the `serve` daemon or 2-step `session show --json`); **no Anthropic/Claude subscription OAuth** (API-key only); tool allowlist config-only; errors not machine-readable on `run`; `-D` isolates data only, config merges the operator's global crush.json. |
 | **flue** | **Framework, not a CLI** - must author + scaffold a TS agent project first; `flue run --json` = a final envelope only (**no tokens/cost/tool-calls on stdout**; instrument `observe()`/OTel in the agent); no per-run model/tool/system-prompt flags (all code+env); **no Claude-sub OAuth**; remote (cloud) sandboxes keep running after a local kill; timeout is cooperative, not a hard `--max-time`. Wins: env-scrub by default in BOTH sandbox modes, clean `local()` process-tree kill, OpenRouter works first try. |
 | **eve** | **Framework, not a CLI**; **Vercel-AI-Gateway-locked** - `eve init --model openrouter/...` is rejected; OpenRouter needs a custom-provider shim in `agent.ts` + a `modelContextWindowTokens` override; the **default `microsandbox` backend hung >140s** without infra and `just-bash` has no real `node` (use the `docker` backend); observability is 2-step (`traces --json`), **no USD off-gateway**; stdout co-mingles `eve:` progress with the result object; no per-run overrides on `invoke`; boots a Nitro host per call and (with docker) leaves a pooled sandbox container `Up`. Wins: real docker/microVM sandbox isolation, no `$HOME` MCP leak, credentials excluded from `invoke` output. |
+| **nanocodex** | **Closed model list** rejects `qwen/qwen3.7-flash`, and its always-on Code Mode sends a freeform `custom` tool that Alibaba (qwen's OpenRouter provider) rejects, so it ran on `xiaomi/mimo-v2.6-pro` (T8 not comparable); no per-run tool allowlist; `--instructions` replaces the system prompt (append = AGENTS.md); no wall-clock timeout; **default-on loaders read operator state**: `$CODEX_HOME` MCP servers, a public MCP catalog, the cwd `.env`, and computer-use on macOS (turn each off, isolate `HOME`/`CODEX_HOME`); INFO traces with full model input go to stderr; USD is estimated from a built-in price table. Wins: one-process JSONL with tokens + USD + typed errors, secret-name env scrub, clean cancel with a `cancelled` terminal event. |
 
 ## 6. Rankings + the decisive axes
 
@@ -183,6 +197,18 @@ mostly lacks (flue scrubs child env by default in every sandbox mode; eve runs r
 docker/microVM sandboxes), and flue matches Pi's 17/21 on the runtime test. They fit a
 control plane that OWNS and instruments the agent codebase, not one that drives a
 generic child. Track flue for its secret hygiene; treat eve as gateway-first.
+
+**nanocodex** (added 2026-10-04) is the strongest new CLI: 62.5/81 static (3rd) and
+19/21 live (2nd, behind dsh). It ships the cleanest driver contract in the field - one
+process, JSONL with tokens + USD + typed `run.error`/`run.failed` events, secret-name
+env scrub, and a clean cancel that ends the stream with a `cancelled` status. It fails
+the deploy-ready gate on four counts: pre-1.0 and fast-moving; a **closed model list**
+(it cannot run the cohort's qwen model at all, and its always-on Code Mode tool breaks
+on qwen's provider); no per-run tool allowlist; and **default-on loaders that read
+operator state** (`$CODEX_HOME` MCP servers, a public MCP catalog, the cwd `.env`,
+macOS computer-use), so a control plane must pass five `false` flags and isolate
+`HOME`/`CODEX_HOME`. Subscription auth is ChatGPT Business/Enterprise only via env.
+Track it as the reference for what a driver-friendly output contract looks like.
 
 ## Method
 

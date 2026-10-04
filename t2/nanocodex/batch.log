@@ -1,0 +1,9 @@
+t7_badmodel_local wall=0.0s
+t7_badmodel_upstream wall=0.2s
+t7_badkey wall=0.4s
+t4b wall=3.9s
+t4 wall=4.7s
+t5 wall=7.9s
+golden wall=33.2s
+verify: --version=1.4.2 plain=hello
+ALL_DONE
