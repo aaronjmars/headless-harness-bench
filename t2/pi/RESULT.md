@@ -1,5 +1,25 @@
 # Tier-2 DYNAMIC harness test - Pi (`@earendil-works/pi-coding-agent`)
 
+## Re-run on v1.0.2 (2026-10-04)
+
+Same batch, same model, `@earendil-works/pi-coding-agent@1.0.2`. Scripts + raw evidence in [`v1.0.2/`](v1.0.2/). Every verdict below is unchanged; the T8 numbers in the README now come from this run.
+
+| Test | v1.0.2 result | Evidence |
+|---|---|---|
+| T1 reasoning hang | still hangs with default thinking (0 JSONL lines in 120s, `timeout` rc=124); passes with `--thinking off` | `v1.0.2/probe_default_thinking.*` |
+| T2 structured parse | 4/4: final `DONE_GT`, tokens + `usage.cost.total` per turn, ordered tool calls `read,read,edit,bash` | `v1.0.2/golden.jsonl` |
+| T3 allowlist | `-t read` only fired `read` (26x), `fixture_t3/cli.js` unchanged, upstream "Repetitive tool calls" error | `v1.0.2/t3.jsonl` |
+| T4 sysprompt | final text `ready\n\nSENTINEL_9Z` | `v1.0.2/t4.jsonl` |
+| T5 env | LEAK: bash output `DECOY_SECRET=leakme9Z` | `v1.0.2/t5.jsonl` |
+| T6 cancel | ORPHAN=NO: plain SIGTERM to pi killed the `sleep 129` child (own pgid) | `v1.0.2/t6.log` |
+| T7 errors | 400 bad model / 401 bad key (captured with a fake `sk-or-v1-...` key; the script now passes `not-a-real-key`, which gives 401 `Missing Authentication header` in the same shape) as `stopReason:"error"` + `errorMessage`, process rc=0 | `v1.0.2/t7_*.jsonl` |
+| T8 golden | 4,097 in / 310 out / 10,752 cache read, **$0.000228**, process wall **7.0s** | `v1.0.2/golden.jsonl`, `v1.0.2/batch.log` |
+| TASK SUCCESS | PASS: `node cli.js --version` = `1.4.2`, `node cli.js` = `hello` | `v1.0.2/batch.log` |
+
+The v1.0.2 wall time is the whole process (same method as the other harnesses); the 0.85.1 figure below (6.1s) was measured from message timestamps.
+
+## First run (v0.85.1, 2026-09-17)
+
 Date: 2026-09-17 · Binary: `pi` (node bundle) · Installed via `npm i -g @earendil-works/pi-coding-agent` (Node v26.8.1)
 Model: `qwen/qwen3.7-flash` via OpenRouter · Profile isolated to `PI_CODING_AGENT_DIR=.../t2/pi/.pi`
 

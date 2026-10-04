@@ -132,7 +132,7 @@ render("1-identity.png",
   [["Language / runtime","TS + Rust / Bun","TS / Node 22+","Zig (native 6 MiB)","TS / Bun","TS / Node (+Py wheel)","Go (native)","TS / Node (Vite)","TS / Node (Nitro)"],
    ["License","MIT","MIT","Apache-2.0","MIT","MIT","FSL-1.1-MIT","Apache-2.0","Apache-2.0"],
    ["OSI-open?","yes","yes","yes","yes","yes","no (MIT after 2y)","yes","yes"],
-   ["Version tested","18.2.4 (run 18.2.0)","0.85.1","0.0.10","1.18.31 (run 1.18.30)","0.1.6-alpha.2","0.95.0","2.0.8","0.60.1"],
+   ["Version tested","18.2.4 (run 18.2.0)","1.0.2 (first 0.85.1)","0.0.10","1.18.31 (run 1.18.30)","0.1.6-alpha.2","0.95.0","2.0.8","0.60.1"],
    ["Maturity","stable","stable","experimental","stable","alpha, no audit","stable","stable","preview / beta"],
    ["Stars","~31.6k","~106k (suspect)","new","~208k","preview","~28k","~8.3k","~5.3k"],
    ["Built-in tools","31","7","~11","~14","~30","~30 (+LSP)","6 (sandbox)","~14"],
@@ -227,7 +227,7 @@ render("4-tier2-live.png",
 
 # 5. cost + speed
 cs = [
- ["pi","$0.000263","6.1s","5,154 (+11.8k cache)","289","leanest"],
+ ["pi","$0.000228","7.0s","4,097 (+10.8k cache)","310","leanest"],
  ["dsh","$0.00048 (computed)","27s","9,447 (+25k cache)","357","lean"],
  ["omp","$0.000821 (native)","20s","12,283 (+59k cache)","801","mid"],
  ["crush","$0.00087 (session json)","61s","26,325","10","heavy"],
@@ -243,7 +243,7 @@ render("5-cost-speed.png",
   "Cost + wall-clock", "same one-line edit task, same cheap model",
   ["Harness","USD","wall","input tok","output tok","context front-load"], cs,
   wraps=[15,24,12,20,11,22], style=cs_style,
-  footer_note="pi ~3x cheaper and ~3x faster than the incumbent.  flue emits no usage on stdout; eve tokens are 2-step (traces), no USD off-gateway.")
+  footer_note="pi ~3.5x cheaper and ~3x faster than the incumbent.  flue emits no usage on stdout; eve tokens are 2-step (traces), no USD off-gateway.")
 
 # 6. blockers
 bl = [

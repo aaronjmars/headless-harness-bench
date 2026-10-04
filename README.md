@@ -33,7 +33,7 @@ Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **ds
 | Language / runtime | TS + Rust / Bun | TS / Node 22+ | Zig (native 6 MiB) | TS / Bun | TS / Node 22+ (+Py wheel) | Go (native) | TS / Node 22+ (Vite) | TS / Node (Nitro) |
 | License | MIT | MIT | Apache-2.0 | MIT | MIT | FSL-1.1-MIT | Apache-2.0 | Apache-2.0 |
 | OSI-open? | yes | yes | yes | yes | yes | no (MIT after 2y) | yes | yes |
-| Version tested | 18.2.4 (live run: 18.2.0) | 0.85.1 | 0.0.10 | 1.18.31 (live run: 1.18.30) | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 |
+| Version tested | 18.2.4 (live run: 18.2.0) | 1.0.2 (first run: 0.85.1) | 0.0.10 | 1.18.31 (live run: 1.18.30) | 0.1.6-alpha.2 | 0.95.0 | 2.0.8 (@flue/cli) | 0.60.1 |
 | Maturity | stable | stable | **experimental** | stable | **alpha, no audit** | stable | stable (2.x) | **preview / beta** |
 | Stars | ~31.6k | ~106k (suspect) | new | ~208k | preview | ~28k | ~8.3k | ~5.3k |
 | Repo | can1357/oh-my-pi | earendil-works/pi | vercel-labs/fx | sst/opencode | deepseek-ai/deepseek-harness | charmbracelet/crush | withastro/flue | vercel/eve |
@@ -123,7 +123,7 @@ process-tree kill (T6); its `--json` carries no tokens/cost/tool-calls (T2).
 
 | Harness | USD | wall | input tok | output tok | context front-load |
 |---|--:|--:|--:|--:|---|
-| **pi** | **$0.000263** | **6.1s** | 5,154 (+11.8k cache) | 289 | leanest |
+| **pi** | **$0.000228** | **7.0s** | 4,097 (+10.8k cache) | 310 | leanest |
 | dsh | $0.00048 (computed, no native USD) | 27s | 9,447 (+25k cache) | 357 | lean |
 | omp | $0.000821 (native) | 20s | 12,283 (+59k cache) | 801 | mid |
 | crush | $0.00087 (via session json) | 61s | 26,325 | 10* | heavy |
@@ -132,7 +132,7 @@ process-tree kill (T6); its `--json` carries no tokens/cost/tool-calls (T2).
 | eve | n/a (no USD off-gateway) | 20.7s (106s w/ image pull) | 21,896 (via traces) | 831 (via traces) | heavy (Nitro host + docker) |
 | fx (grok, n/c) | n/a (grok sub) | 21s | 86,401 | 457 | very heavy (86k skill catalog) |
 
-pi is ~3x cheaper and ~3x faster than the incumbent on the same task. fx injects
+pi is ~3.5x cheaper and ~3x faster than the incumbent on the same task. fx injects
 an 86k-token skill catalog even for a one-line edit; pi front-loads almost nothing.
 flue emits no usage on stdout at all (instrument the agent to get it); eve's tokens
 come only from a 2nd `traces --json` call and it carries no USD off the gateway.

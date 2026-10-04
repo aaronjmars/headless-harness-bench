@@ -1,0 +1,8 @@
+t7_badkey wall=.352376000s
+t7_badmodel wall=.357397000s
+t4 wall=1.515671000s
+t5 wall=2.045828000s
+golden wall=7.034106000s
+t3 wall=31.741593000s
+verify: --version=1.4.2 plain=hello
+ALL_DONE
