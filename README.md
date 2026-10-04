@@ -17,7 +17,7 @@ Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **ds
 ## TL;DR
 
 - **Deploy-today rank (control-plane role): OMP > opencode > Pi.**
-- **Capability rank: OMP ~= dsh > opencode > Pi > fx > Crush.**
+- **Capability rank: OMP ~= dsh > nanocodex > opencode > Pi > fx > Crush.**
 - **flue + eve (frameworks) land mid-pack on Tier-1 (54.9 / 52.1 of 81)**: both bring
   best-in-class secret hygiene (env-scrub / sandbox isolation, no `$HOME` MCP leak) but
   lose on the driver contract - no per-turn JSONL on stdout, no per-run CLI overrides,
@@ -169,18 +169,23 @@ come only from a 2nd `traces --json` call and it carries no USD off the gateway.
 **Deploy-ready gate** = stable release + no unaudited secret-handling + a non-daemon
 structured one-shot. Pass: OMP, opencode, Pi. Fail: fx (experimental), dsh (alpha +
 no-audit + no env-token OAuth + broken published build), crush (structured output
-is daemon-only + no Claude-sub OAuth).
+is daemon-only + no Claude-sub OAuth), nanocodex (pre-1.0 + closed model list + no
+per-run tool allowlist + subscription env token for ChatGPT Business/Enterprise only).
 
 Three axes decide the order:
 
 1. **Structured one-shot output** (JSONL + USD cost from one subprocess): OMP /
-   opencode / Pi have it; fx gives one object, dsh omits cost, crush needs a daemon.
+   opencode / Pi / nanocodex have it (nanocodex's USD is client-estimated); fx gives
+   one object, dsh omits cost, crush needs a daemon.
 2. **Subscription-OAuth via a durable env token** (a control plane runs on the Claude sub, no
-   API key): OMP / opencode / Pi only. fx / dsh / crush cannot meet it.
-3. **Containment**: of the six CLIs only **dsh** scrubs child env by default; the
-   incumbent OMP is the worst (env leak + foreign-MCP-from-`$HOME`). The other CLIs
-   leak too, so the control plane's env-allowlist + isolated-`$HOME` +
-   process-group-kill layer stays load-bearing for every CLI except dsh. The two
+   API key): OMP / opencode / Pi only. fx / dsh / crush cannot meet it; nanocodex only
+   for ChatGPT Business/Enterprise (`CODEX_ACCESS_TOKEN`).
+3. **Containment**: of the seven CLIs only **dsh** and **nanocodex** scrub child env by
+   default (both by secret-like name, so plain names still leak); the incumbent OMP is
+   the worst (env leak + foreign-MCP-from-`$HOME`), and nanocodex shares its default-on
+   `$CODEX_HOME` MCP loading. The other CLIs leak too, so the control plane's
+   env-allowlist + isolated-`$HOME` + process-group-kill layer stays load-bearing for
+   every CLI, partially even for dsh and nanocodex. The two
    frameworks also isolate (flue scrubs env, eve runs a docker sandbox).
 
 **Net:** OMP remains the right incumbent. **opencode** is the one realistic swap to
@@ -215,7 +220,8 @@ Track it as the reference for what a driver-friendly output contract looks like.
 - **Tier-1**: static source audit, 8 weighted categories, 0-3 per criterion with
   file:line citations (see BENCHMARK.md).
 - **Tier-2**: live golden-task run on `qwen/qwen3.7-flash` via OpenRouter (fx on
-  grok-4.6; eve via a custom-provider shim on the same OpenRouter model), 8 runtime
+  grok-4.6, nanocodex on mimo-v2.6-pro; eve via a custom-provider shim on the same
+  OpenRouter model), 8 runtime
   tests + task success, raw jsonl/out evidence per harness.
 
 ## Layout

@@ -156,12 +156,14 @@ measured 0.5-point win.
 
 Two ranks matter, because capability and readiness diverge sharply here:
 
-- **Capability rank** (score as-is): OMP ~= dsh > opencode > Pi > fx > Crush. The
+- **Capability rank** (score as-is): OMP ~= dsh > nanocodex > opencode > Pi > fx >
+  Crush (nanocodex added 2026-10-04 at 62.5). The
   real result: **dsh is the best-architected of the six and rivals the incumbent on
   raw capability** - isolation leader (D), extensibility leader (G), ships the
   headless+JSONL+per-run-swap+yolo contract today.
 - **Deploy-today rank** (apply the readiness gate below): OMP > opencode > Pi >
-  [fx, dsh gated] > Crush. dsh's capability does NOT survive the readiness gate:
+  [fx, dsh, nanocodex gated] > Crush. nanocodex is gated for being pre-1.0 with a
+  closed model list and no per-run tool allowlist. dsh's capability does NOT survive the readiness gate:
   three a control plane-specific gaps (no USD cost in the stream, OAuth-sub not consumable via
   an env token, no wall-clock timeout) PLUS v0.1.6-alpha + no security audit +
   telemetry-home-by-default. fx (v0.0.10 experimental) is likewise gated. Treat both
@@ -328,7 +330,8 @@ cannot easily paper over:
   cost from a single subprocess. fx gives one final object; dsh omits cost; Crush
   needs a daemon. This is why the top 3 cluster and Crush sinks.
 - **Subscription-OAuth + provider breadth** (C3+C1+C6): OMP/opencode/Pi carry
-  Claude-sub OAuth; fx/Crush/dsh do not. the control plane's "run on the Claude sub, no API
+  Claude-sub OAuth; fx/Crush/dsh do not, and nanocodex only via a ChatGPT
+  Business/Enterprise env token. the control plane's "run on the Claude sub, no API
   key" invariant is a hard filter that eliminates half the field for the primary
   provider.
 - **Containment splits the field** (D): five of the six CLIs ship NO child-env allowlist and
@@ -338,6 +341,8 @@ cannot easily paper over:
   default and adds an FS sandbox. So the newest design has the best isolation and
   the oldest-incumbent the weakest - but the control plane's own env-allowlist +
   isolated-`$HOME` layer stays necessary for every harness except (partially) dsh.
+  nanocodex (added later) also scrubs by secret-like name (`env_clear` + denylist) but
+  loads `$CODEX_HOME` MCP servers and the cwd `.env` by default.
 
 ### Readiness gate
 
@@ -437,8 +442,9 @@ the caller MUST kill the process group - which the caller must do).
 The headline dimension - **env isolation (T5)** - split exactly as predicted: only
 **dsh** scrubbed secrets from the child (`FAKE_API_TOKEN`, `DECOY_SECRET`,
 `DSH_DECOY` all gone; only the pattern-free `DECOY_PLAIN` leaked); the other five
-CLIs leaked the full parent env. The frameworks added later (flue, eve) also
-isolate, see their section. This is the one place the newest design beats the
+CLIs leaked the full parent env. The harnesses added later also isolate: flue and
+eve (frameworks) and nanocodex (secret-name scrub like dsh; a plain name and the cwd
+`.env` leaked), see their sections. This is the one place the newest design beats the
 incumbent live.
 
 ### Net effect on the ranking
