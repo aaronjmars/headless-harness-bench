@@ -223,7 +223,7 @@ def t2_style(r,c,v):
 render("4-tier2-live.png",
   "Tier-2 live run", "golden task, qwen/qwen3.7-flash (fx on grok-4.6, nanocodex on mimo-v2.6-pro: T8 not comparable; eve via shim)",
   H4, t2, wraps=[26,9,9,9,9,9,9,9,9,10], style=t2_style,
-  footer_note="*pi hangs until --thinking off.  ^crush run=text, JSON via session show.  ~fx deny shell-escapable.  +eve stdout mixes progress+result.  #eve defaultTools did not drop sandbox bash.  &eve container lingers (pooled).  %nanocodex: no per-run allowlist.  $nanocodex scrubs secret-named vars; plain names + cwd .env leak.")
+  footer_note="*pi hangs until --thinking off.  ^crush run=text, JSON via session show.  ~fx deny shell-escapable.  +eve stdout mixes progress+result.  #eve defaultTools did not drop sandbox bash.  &eve: no orphan, but ~14s teardown and reports running, not cancelled.  %nanocodex: no per-run allowlist.  $nanocodex scrubs secret-named vars; plain names + cwd .env leak.")
 
 # 5. cost + speed
 cs = [
@@ -255,7 +255,7 @@ bl = [
  ["dsh","Published latest (0.1.5-rc.2) rejects --json (pin 0.1.6-alpha.2); no USD cost in stream; subscription OAuth not usable via env token; uploads session-log to DeepSeek by default; alpha, no security audit."],
  ["crush","run stdout is plain text only (structured needs the serve daemon); no Anthropic/Claude subscription OAuth (API-key only); tool allowlist config-only; errors not machine-readable on run."],
  ["flue","Framework, not a CLI (author + scaffold a TS agent project first); flue run --json is a final envelope with no tokens/cost/tool-calls on stdout (usage only via in-code observe()/OTel); no per-run model/tool/system-prompt flags; no Claude-sub OAuth. Wins: env-scrub by default in BOTH sandbox modes, clean process-tree kill."],
- ["eve","Framework, not a CLI; Vercel-AI-Gateway-locked (OpenRouter needs a custom-provider shim + modelContextWindowTokens); default microsandbox backend hung >140s, just-bash has no node (use docker); usage is a 2-step traces --json, no USD off-gateway; stdout co-mingles progress with the result; Nitro host per invoke + lingering docker sandbox."],
+ ["eve","Framework, not a CLI; Vercel-AI-Gateway-locked (OpenRouter needs a custom-provider shim + modelContextWindowTokens); default microsandbox backend hung >140s, just-bash has no node (use docker); usage is a 2-step traces --json, no USD off-gateway; stdout co-mingles progress with the result; Nitro host per invoke; SIGTERM teardown takes ~14s."],
  ["nanocodex","Closed model list rejects qwen, and its always-on Code Mode tool breaks on qwen's provider (ran on mimo-v2.6-pro); no per-run tool allowlist; no wall-clock timeout; default-on loaders read $CODEX_HOME MCP config, a public MCP catalog, the cwd .env and macOS computer-use (turn off + isolate HOME); full model input traced to stderr. Wins: one-process JSONL with tokens + USD + typed errors, secret-name env scrub, clean cancel."]]
 ready={"omp":GREEN,"opencode":GREEN,"pi":GREEN,"fx":AMBER,"dsh":AMBER,"crush":AMBER,"flue":AMBER,"eve":AMBER,"nanocodex":AMBER}
 def bl_style(r,c,v):

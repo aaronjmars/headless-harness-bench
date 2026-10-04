@@ -1,0 +1,17 @@
+eve: opening sandbox session "root" on backend "docker"...
+eve: starting sandbox command: sleep 120 && echo SLEPT_T6
+{
+  "status": "running",
+  "resume": {
+    "session": {
+      "sessionId": "wrun_01M447DVG43KJ8Y6QMVTE8KDTR",
+      "streamIndex": 28
+    },
+    "target": {
+      "kind": "local"
+    }
+  }
+}
+eve: waiting for sandbox command (5s elapsed): sleep 120 && echo SLEPT_T6
+eve: waiting for sandbox command (10s elapsed): sleep 120 && echo SLEPT_T6
+eve: waiting for sandbox command (15s elapsed): sleep 120 && echo SLEPT_T6

@@ -250,8 +250,8 @@ driver contract. Full per-test evidence in [t2/flue/RESULT.md](t2/flue/RESULT.md
   observability is a **2-step `traces --json`** retrieval (no inline usage, no JSONL,
   no USD off-gateway) and stdout co-mingles `eve:` progress with the result object; (3)
   operationally heavy - the default `microsandbox` backend **hung >140s** without infra,
-  `just-bash` has no real `node`, and it boots a Nitro host per `invoke` while leaving a
-  pooled docker sandbox container `Up`. Same gated-out class as fx: track, do not adopt.
+  `just-bash` has no real `node`, and it boots a Nitro host per `invoke`; a SIGTERM leaves no
+  orphan but `invoke` takes ~14s to tear the docker sandbox down. Same gated-out class as fx: track, do not adopt.
 
 ### nanocodex 62.5 (CLI, added 2026-10-04)
 
@@ -385,8 +385,9 @@ cost/wall is NOT comparable.
 `+` eve stdout co-mingles `eve:` progress rows with the final JSON object. `@` eve
 tokens+tool-calls need a 2nd `eve traces --json` keyed by sessionId; no USD
 off-gateway. `#` eve `defaultTools:false` did not drop the sandbox `bash` (real
-control is the per-tool approval policy in code). `&` eve `invoke` cancels clean with
-no host orphan, but the docker sandbox container lingers (pooled; reap separately).
+control is the per-tool approval policy in code). `&` eve SIGTERM leaves no orphan (host
+or container) and removes the container, but `invoke` lives ~14s more and reports a
+resumable `status:"running"`, not a cancel (re-run 2026-10-04, `t2/eve/t6-rerun.log`).
 `%` nanocodex has no per-run tool allowlist (only toggles for extras; shell + patch
 always on). `$` nanocodex scrubs secret-named vars but a plain-named var and the cwd
 `.env` (auto-loaded) reach the shell, the same pattern as dsh. nanocodex ran on
