@@ -1,0 +1,33 @@
+containers before: 
+invoke_pid=16484 pgid=16417
+sleep_started_after=6s
+sandbox_container=5ad5a9617e82
+=== in-container processes before cancel ===
+PID                 COMMAND
+554                 /bin/sh -c sleep 2147483647
+566                 sleep 2147483647
+593                 bash -c echo "$$" > '/tmp/.eve-sbx-spawn-fc0e60f0-1772-40a3-84bb-05c7e2f74f05.pid'; bash -lc 'sleep 120 && echo SLEPT_T6'; status=$?; rm -f '/tmp/.eve-sbx-spawn-fc0e60f0-1772-40a3-84bb-05c7e2f74f05.pid'; exit $status
+599                 bash -lc sleep 120 && echo SLEPT_T6
+602                 sleep 120
+=== host descendants of invoke before cancel ===
+16484 node /private/tmp/hhb/evep/t6proj/node_modules/.bin/../.pnpm/eve@0.60.1_ai@7.0.127_zod@4.5.4_/node_modules/eve/bin/eve.js invoke Use your bash tool to run exactly this command and wait for it to finish: sleep 120 && echo SLEPT_T6
+16649 docker exec -w /workspace 5ad5a9617e82cc5bb564550bee77c81fd9840ff9dea7647fe86c139afed53009 bash -c echo "$$" > '/tmp/.eve-sbx-spawn-fc0e60f0-1772-40a3-84bb-05c7e2f74f05.pid'; bash -lc 'sleep 120 && echo SLEPT_T6'; status=$?; rm -f '/tmp/.eve-sbx-spawn-fc0e60f0-1772-40a3-84bb-05c7e2f74f05.pid'; exit $status
+=== SIGTERM to eve invoke 16484 only ===
+t+1s eve=alive sandbox_sleep=gone container=up
+t+2s eve=alive sandbox_sleep=gone container=up
+t+3s eve=alive sandbox_sleep=gone container=up
+t+4s eve=alive sandbox_sleep=gone container=up
+t+5s eve=alive sandbox_sleep=gone container=up
+t+6s eve=alive sandbox_sleep=gone container=up
+t+7s eve=alive sandbox_sleep=gone container=up
+t+8s eve=alive sandbox_sleep=gone container=up
+t+9s eve=alive sandbox_sleep=gone container=up
+t+10s eve=alive sandbox_sleep=gone container=up
+t+11s eve=alive sandbox_sleep=gone container=up
+t+12s eve=alive sandbox_sleep=gone container=up
+t+13s eve=alive sandbox_sleep=gone container=up
+t+14s eve=alive sandbox_sleep=gone container=gone
+t+15s eve=dead sandbox_sleep=gone container=gone
+invoke rc=143
+no host sleep
+T6_DONE
