@@ -1,4 +1,9 @@
-# headless-harness-bench
+# headless-harness-bench: scorecard, live tests and rankings (as of 2026-10-04)
+
+This is the repo README as it stood on 2026-10-04 (last changed in #7), moved here unchanged
+when the repo adopted the bench standard on 2026-10-09 (only relative links were fixed). The
+machine-readable records are in [../runs/](../runs/) and [../RESULTS.md](../RESULTS.md); the
+benchmark card is [../METHOD.md](../METHOD.md).
 
 Benchmark comparing 9 coding-agent harnesses for the role of a **headless agent
 loop driven by a control plane**: another program drives it as a child and parses,
@@ -29,7 +34,7 @@ Harnesses: **omp** (Oh My Pi), **pi**, **fx** (Vercel), **opencode** (SST), **ds
   loaders that read `$CODEX_HOME` MCP config and the cwd `.env`.
 - All 9 completed the golden task once wired. The order is about auth fit, structured
   output, isolation, maturity, and cost - not raw ability.
-- Full reasoning + file:line citations in **[BENCHMARK.md](BENCHMARK.md)**; this
+- Full reasoning + file:line citations in **[BENCHMARK.md](../BENCHMARK.md)**; this
   README carries every finding as tables.
 
 ## 1. Identity + distribution
