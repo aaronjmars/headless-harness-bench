@@ -1,0 +1,390 @@
+{
+  "schema_version": "bench-manifest/1",
+  "id": "2026-09-17-tier1-static-audit",
+  "bench": "headless-harness-bench",
+  "question": "How well does each harness fit the headless agent-loop role a control plane drives, by static source audit?",
+  "title": "Tier-1 static source audit, 9 harnesses, weighted /81",
+  "started_at": "2026-09-17",
+  "finished_at": "2026-10-04",
+  "revision": {
+    "repo": "aaronjmars/headless-harness-bench",
+    "commit": "e9899e5",
+    "dirty": null
+  },
+  "command": "static source and docs audit per harness (no model calls by the harness); see BENCHMARK.md",
+  "setup": "standard",
+  "setup_notes": null,
+  "env": {
+    "method": "static source + docs audit by investigator agents, reviewed by the operator; every criterion scored 0-3 with a file:line, flag or doc citation",
+    "revision_note": "first six harnesses in e9899e5 (2026-09-17), flue and eve in c8d50b3 (2026-09-18), fx correction in 61429fa and nanocodex in 57cec99 (both 2026-10-04)"
+  },
+  "eval_library": {
+    "name": "headless-harness-bench",
+    "version": "e9899e5"
+  },
+  "interaction_type": "agentic",
+  "headline": true,
+  "source_data": {
+    "dataset_name": "tier1-rubric",
+    "source_type": "url",
+    "url": [
+      "https://github.com/aaronjmars/headless-harness-bench/blob/main/BENCHMARK.md"
+    ],
+    "version": "1-A",
+    "n_planned": 8,
+    "n_completed": 8,
+    "split": "8 weighted categories (A-H), 42 criteria"
+  },
+  "subjects": [
+    {
+      "name": "omp@18.2.4",
+      "harness": {
+        "name": "omp",
+        "version": "18.2.4"
+      },
+      "config_note": "source audit of can1357/oh-my-pi"
+    },
+    {
+      "name": "dsh@0.1.6-alpha.2",
+      "harness": {
+        "name": "dsh",
+        "version": "0.1.6-alpha.2"
+      },
+      "config_note": "source audit of deepseek-ai/deepseek-harness"
+    },
+    {
+      "name": "opencode@1.18.31",
+      "harness": {
+        "name": "opencode",
+        "version": "1.18.31"
+      },
+      "config_note": "source audit of sst/opencode"
+    },
+    {
+      "name": "pi@0.85.1",
+      "harness": {
+        "name": "pi",
+        "version": "0.85.1"
+      },
+      "config_note": "source audit of earendil-works/pi"
+    },
+    {
+      "name": "fx@0.0.10",
+      "harness": {
+        "name": "fx",
+        "version": "0.0.10"
+      },
+      "config_note": "source audit of vercel-labs/fx"
+    },
+    {
+      "name": "crush@0.95.0",
+      "harness": {
+        "name": "crush",
+        "version": "0.95.0"
+      },
+      "config_note": "source audit of charmbracelet/crush"
+    },
+    {
+      "name": "flue@2.0.8",
+      "harness": {
+        "name": "flue",
+        "version": "2.0.8"
+      },
+      "config_note": "source audit of withastro/flue"
+    },
+    {
+      "name": "eve@0.60.1",
+      "harness": {
+        "name": "eve",
+        "version": "0.60.1"
+      },
+      "config_note": "source audit of vercel/eve"
+    },
+    {
+      "name": "nanocodex@0.6.6",
+      "harness": {
+        "name": "nanocodex",
+        "version": "0.6.6"
+      },
+      "config_note": "source audit of gakonst/nanocodex"
+    }
+  ],
+  "repeats": {
+    "planned": 1,
+    "completed": 1,
+    "aggregation": "mean"
+  },
+  "llm_scoring": null,
+  "metric_config": {
+    "weighted_total": {
+      "metric_name": "Weighted total",
+      "metric_unit": "points (0-81)",
+      "lower_is_better": false,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": 81,
+      "evaluation_description": "Sum over categories A-H of mean(criteria 0-3) x weight (5,4,4,4,3,2,2,3). Static source audit, one pass. Judgment noise about +/-3; trust tiers, not decimals.",
+      "metric_parameters": {
+        "from": "external"
+      }
+    },
+    "category_mean": {
+      "metric_name": "Unweighted category mean",
+      "metric_unit": "points (0-3)",
+      "lower_is_better": false,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": 3,
+      "evaluation_description": "Mean of the 8 published (rounded) category means, unweighted. A secondary view; the weighted total is the published score.",
+      "metric_parameters": {
+        "from": "score"
+      }
+    }
+  },
+  "primary_metric": "weighted_total",
+  "evaluation_results": {
+    "omp@18.2.4": {
+      "weighted_total": {
+        "score": 66.1,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 65.80. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.45,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.674,
+          "standard_error": {
+            "value": 0.2383,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.8864,
+            "upper": 3,
+            "confidence_level": 0.95,
+            "method": "t, clipped to metric range"
+          }
+        }
+      }
+    },
+    "dsh@0.1.6-alpha.2": {
+      "weighted_total": {
+        "score": 65.6,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 65.30. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.4375,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.2875,
+          "standard_error": {
+            "value": 0.1017,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 2.1971,
+            "upper": 2.6779,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "opencode@1.18.31": {
+      "weighted_total": {
+        "score": 61.6,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 61.30. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.2125,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.5194,
+          "standard_error": {
+            "value": 0.1837,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.7782,
+            "upper": 2.6468,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "pi@0.85.1": {
+      "weighted_total": {
+        "score": 60.9,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 60.50. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.1375,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.7269,
+          "standard_error": {
+            "value": 0.257,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.5297,
+            "upper": 2.7453,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "fx@0.0.10": {
+      "weighted_total": {
+        "score": 56.6,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 56.80. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.0625,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.4809,
+          "standard_error": {
+            "value": 0.17,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.6604,
+            "upper": 2.4646,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "crush@0.95.0": {
+      "weighted_total": {
+        "score": 52.1,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 52.05. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 1.9188,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.5028,
+          "standard_error": {
+            "value": 0.1778,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.4983,
+            "upper": 2.3392,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "flue@2.0.8": {
+      "weighted_total": {
+        "score": 54.9,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 54.90. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.0125,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.3643,
+          "standard_error": {
+            "value": 0.1288,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.7079,
+            "upper": 2.3171,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "eve@0.60.1": {
+      "weighted_total": {
+        "score": 52.1,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 52.30. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 1.9125,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.3758,
+          "standard_error": {
+            "value": 0.1329,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 1.5982,
+            "upper": 2.2268,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    },
+    "nanocodex@0.6.6": {
+      "weighted_total": {
+        "score": 62.5,
+        "note": "published total from unrounded per-criterion scores; sum of the rounded category means is 62.70. Judgment noise about +/-3."
+      },
+      "category_mean": {
+        "score": 2.3375,
+        "uncertainty": {
+          "num_samples": 8,
+          "standard_deviation": 0.4033,
+          "standard_error": {
+            "value": 0.1426,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 2.0003,
+            "upper": 2.6747,
+            "confidence_level": 0.95,
+            "method": "t"
+          }
+        }
+      }
+    }
+  },
+  "comparisons": [],
+  "errors": {
+    "n": 0,
+    "of": 72,
+    "counted_as": "zero",
+    "note": null,
+    "by_source": {}
+  },
+  "cost": {
+    "usd": null,
+    "basis": "none",
+    "note": "static audit; the investigators' model spend was not recorded"
+  },
+  "seconds": null,
+  "decision_rule": null,
+  "verdict": "SNAPSHOT",
+  "status": "complete",
+  "summary": "Totals /81: omp 66.1, dsh 65.6, nanocodex 62.5, opencode 61.6, pi 60.9, fx 56.6, flue 54.9, crush 52.1, eve 52.1. Noise is about +/-3 (single static pass, judgment calls), so read tiers, not decimals: the omp/dsh gap is within noise. Capability and deploy readiness diverge; the readiness gate and rankings are in docs/2026-10-04-harness-comparison.md and BENCHMARK.md.",
+  "compared_with": [],
+  "raw": {
+    "kept": true,
+    "location": "BENCHMARK.md (criteria, scorecard, nanocodex per-criterion scores)",
+    "reason": "per-criterion scores for the first eight harnesses were not written down, only category means"
+  },
+  "writeup": "docs/2026-10-04-harness-comparison.md",
+  "superseded_by": null,
+  "corrections": [
+    {
+      "date": "2026-10-04",
+      "author": "Aaron Elijah Mars",
+      "reason": "The Tier-2 live run found no --timeout flag on the shipped fx 0.0.10 binary, so E1 max-time drops 3 -> 1 and category E 2.5 -> 2.0 (commit 61429fa). Rank unchanged.",
+      "field": "evaluation_results.fx@0.0.10.weighted_total.score",
+      "old": 58.1,
+      "new": 56.6
+    }
+  ]
+}

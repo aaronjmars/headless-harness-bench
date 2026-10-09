@@ -1,12 +1,9 @@
 name: Validate benchmark
-
 on:
   push:
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -19,3 +16,10 @@ jobs:
         run: python scripts/validate_benchmark.py
       - name: Run validator tests
         run: python -m unittest discover -s tests -v
+  bench-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aaronjmars/bench-kit@v0.2.0
+        with:
+          args: --warn-only # drop once the standard has settled here

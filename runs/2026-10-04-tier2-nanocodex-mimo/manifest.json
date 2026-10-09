@@ -1,0 +1,197 @@
+{
+  "schema_version": "bench-manifest/1",
+  "id": "2026-10-04-tier2-nanocodex-mimo",
+  "bench": "headless-harness-bench",
+  "question": "Does nanocodex honor the headless driver contract live?",
+  "title": "Tier-2 live run, nanocodex on mimo-v2.6-pro (not comparable)",
+  "started_at": "2026-10-04",
+  "finished_at": null,
+  "revision": {
+    "repo": "aaronjmars/headless-harness-bench",
+    "commit": "57cec99",
+    "dirty": null
+  },
+  "command": "t2/nanocodex/run_batch.sh and t2/nanocodex/run_t6.sh",
+  "setup": "custom",
+  "setup_notes": "Ran on xiaomi/mimo-v2.6-pro, not qwen/qwen3.7-flash: nanocodex only accepts a closed model list, and with a model-rewrite proxy qwen's provider rejects its always-on Code Mode custom tool (t2/nanocodex/qwen_blocked.jsonl). T1-T7 and task success are valid harness evidence; T8 is not comparable and nanocodex is excluded from any comparison. T3 was scored from run --help (no allowlist to pass).",
+  "env": {
+    "host": "macOS",
+    "fixture": "isolated HOME and CODEX_HOME, NANOCODEX_COMPUTER=off"
+  },
+  "eval_library": {
+    "name": "headless-harness-bench",
+    "version": "57cec99"
+  },
+  "interaction_type": "agentic",
+  "source_data": {
+    "dataset_name": "tier2-live-tests",
+    "source_type": "url",
+    "url": [
+      "https://github.com/aaronjmars/headless-harness-bench/blob/main/BENCHMARK.md"
+    ],
+    "version": "1-A",
+    "n_planned": 8,
+    "n_completed": 8,
+    "split": null
+  },
+  "subjects": [
+    {
+      "name": "nanocodex@0.6.6+mimo-v2.6-pro",
+      "model_info": {
+        "id": "xiaomi/mimo-v2.6-pro",
+        "developer": "xiaomi",
+        "inference_platform": "openrouter"
+      },
+      "harness": {
+        "name": "nanocodex",
+        "version": "0.6.6"
+      },
+      "generation_args": {
+        "flags": "run --mcp-defaults false --mcp-codex-config false --rollouts false --subagents false --image-generation false --web-search false --memory false",
+        "thinking": "low"
+      },
+      "config_note": "release binary nanocodex-aarch64-apple-darwin, commit 7fcc3e7, SHA256 checked"
+    }
+  ],
+  "repeats": {
+    "planned": 1,
+    "completed": 1,
+    "aggregation": "mean"
+  },
+  "llm_scoring": null,
+  "metric_config": {
+    "contract": {
+      "metric_name": "Driver-contract test score (T1-T7 mean)",
+      "metric_unit": "points (0-3)",
+      "lower_is_better": false,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": 3,
+      "evaluation_description": "Mean of the seven runtime tests T1-T7, each scored 0-3 by the operator against the raw evidence. x7 = the published T1-T7 total /21.",
+      "metric_parameters": {
+        "from": "score"
+      }
+    },
+    "contract_total": {
+      "metric_name": "T1-T7 total",
+      "metric_unit": "points (0-21)",
+      "lower_is_better": false,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": 21,
+      "evaluation_description": "Sum of T1-T7 as published (= 7 x contract). Checked against the samples by scripts/backfill_standard.py.",
+      "metric_parameters": {
+        "from": "external"
+      }
+    },
+    "task_success": {
+      "metric_name": "Golden task success",
+      "metric_unit": "share",
+      "lower_is_better": false,
+      "score_type": "binary",
+      "min_score": 0,
+      "max_score": 1,
+      "evaluation_description": "Golden task: add a --version flag to cli.js, print DONE_GT. Success = node cli.js --version prints 1.4.2, node cli.js prints hello, only cli.js changed.",
+      "metric_parameters": {
+        "from": "is_correct"
+      }
+    },
+    "golden_usd_per_1k": {
+      "metric_name": "Golden task cost per 1,000 runs (T8)",
+      "metric_unit": "USD per 1,000 runs",
+      "lower_is_better": true,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": null,
+      "evaluation_description": "USD of one golden run x 1000, from the golden row cost_usd. Null where the harness emits no USD.",
+      "metric_parameters": {
+        "from": "external"
+      }
+    },
+    "golden_wall_s": {
+      "metric_name": "Golden task wall time (T8)",
+      "metric_unit": "seconds",
+      "lower_is_better": true,
+      "score_type": "continuous",
+      "min_score": 0,
+      "max_score": null,
+      "evaluation_description": "Wall time of one golden run, from the golden row latency_ms. Method per row in samples metadata.",
+      "metric_parameters": {
+        "from": "external"
+      }
+    }
+  },
+  "primary_metric": "contract",
+  "evaluation_results": {
+    "nanocodex@0.6.6+mimo-v2.6-pro": {
+      "contract_total": {
+        "score": 19
+      },
+      "golden_usd_per_1k": {
+        "score": 2.0023
+      },
+      "golden_wall_s": {
+        "score": 33.2
+      },
+      "contract": {
+        "score": 2.7143,
+        "uncertainty": {
+          "num_samples": 7,
+          "standard_deviation": 0.7559,
+          "standard_error": {
+            "value": 0.2857,
+            "method": "sd of task means / sqrt(n)"
+          },
+          "confidence_interval": {
+            "lower": 2.0151,
+            "upper": 3,
+            "confidence_level": 0.95,
+            "method": "t, clipped to metric range"
+          }
+        }
+      },
+      "task_success": {
+        "score": 1.0,
+        "uncertainty": {
+          "num_samples": 1
+        }
+      }
+    }
+  },
+  "comparisons": [],
+  "errors": {
+    "n": 0,
+    "of": 8,
+    "counted_as": "zero",
+    "note": "Harness failures are test results (scored 0-3), not errors.",
+    "by_source": {}
+  },
+  "cost": {
+    "usd": null,
+    "basis": "api",
+    "prices_as_of": "2026-10-04",
+    "note": "golden USD is client-estimated by nanocodex; batch total not recorded"
+  },
+  "seconds": null,
+  "decision_rule": null,
+  "verdict": "SNAPSHOT",
+  "status": "complete",
+  "summary": "T1-T7 19/21, golden task passed. One-process JSONL with tokens, estimated USD and typed errors, secret-name env scrub and a clean cancel; no per-run tool allowlist and default-on loaders read operator state. Not comparable with the qwen runs.",
+  "compared_with": [],
+  "raw": {
+    "kept": true,
+    "location": "t2/nanocodex/"
+  },
+  "writeup": "t2/nanocodex/RESULT.md",
+  "superseded_by": null,
+  "corrections": [],
+  "token_usage": {
+    "nanocodex@0.6.6+mimo-v2.6-pro": {
+      "input_tokens": 35157,
+      "output_tokens": 1210,
+      "input_tokens_cache_read": 33280,
+      "reasoning_tokens": 420,
+      "total_tokens": 36367
+    }
+  }
+}
