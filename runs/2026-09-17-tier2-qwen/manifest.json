@@ -213,7 +213,8 @@
       "task_success": {
         "score": 1.0,
         "uncertainty": {
-          "num_samples": 1
+          "num_samples": 1,
+          "no_interval_reason": "1 task"
         }
       }
     },
@@ -247,7 +248,8 @@
       "task_success": {
         "score": 1.0,
         "uncertainty": {
-          "num_samples": 1
+          "num_samples": 1,
+          "no_interval_reason": "1 task"
         }
       }
     },
@@ -281,7 +283,8 @@
       "task_success": {
         "score": 1.0,
         "uncertainty": {
-          "num_samples": 1
+          "num_samples": 1,
+          "no_interval_reason": "1 task"
         }
       }
     },
@@ -315,7 +318,8 @@
       "task_success": {
         "score": 1.0,
         "uncertainty": {
-          "num_samples": 1
+          "num_samples": 1,
+          "no_interval_reason": "1 task"
         }
       }
     },
@@ -349,7 +353,8 @@
       "task_success": {
         "score": 1.0,
         "uncertainty": {
-          "num_samples": 1
+          "num_samples": 1,
+          "no_interval_reason": "1 task"
         }
       }
     }
