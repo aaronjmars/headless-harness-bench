@@ -10,7 +10,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: pi@1.0.2+qwen3.7-flash (pi@1.0.2 + qwen/qwen3.7-flash via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: standard. Judge: none
 - Primary (contract): pi@1.0.2+qwen3.7-flash 2.429 [1.38, 3]
-- Other metrics: contract_total: pi@1.0.2+qwen3.7-flash 17; task_success: pi@1.0.2+qwen3.7-flash 1; golden_usd_per_1k: pi@1.0.2+qwen3.7-flash 0.228; golden_wall_s: pi@1.0.2+qwen3.7-flash 7.034
+- Other metrics: contract_total: pi@1.0.2+qwen3.7-flash 17; task_success: pi@1.0.2+qwen3.7-flash 1 [CI n/a: 1 task]; golden_usd_per_1k: pi@1.0.2+qwen3.7-flash 0.228; golden_wall_s: pi@1.0.2+qwen3.7-flash 7.034
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-10-04 (golden-task USD is in golden_usd_per_1k; batch total not recorded)
 - Verdict: SNAPSHOT. Status: complete
@@ -25,7 +25,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: nanocodex@0.6.6+mimo-v2.6-pro (nanocodex@0.6.6 + xiaomi/mimo-v2.6-pro via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: custom (Ran on xiaomi/mimo-v2.6-pro, not qwen/qwen3.7-flash: nanocodex only accepts a closed model list, and with a model-rewrite proxy qwen's provider rejects its always-on Code Mode custom tool (t2/nanocodex/qwen_blocked.jsonl). T1-T7 and task success are valid harness evidence; T8 is not comparable and nanocodex is excluded from any comparison. T3 was scored from run --help (no allowlist to pass).). Judge: none
 - Primary (contract): nanocodex@0.6.6+mimo-v2.6-pro 2.714 [2.015, 3]
-- Other metrics: contract_total: nanocodex@0.6.6+mimo-v2.6-pro 19; task_success: nanocodex@0.6.6+mimo-v2.6-pro 1; golden_usd_per_1k: nanocodex@0.6.6+mimo-v2.6-pro 2.002; golden_wall_s: nanocodex@0.6.6+mimo-v2.6-pro 33.2
+- Other metrics: contract_total: nanocodex@0.6.6+mimo-v2.6-pro 19; task_success: nanocodex@0.6.6+mimo-v2.6-pro 1 [CI n/a: 1 task]; golden_usd_per_1k: nanocodex@0.6.6+mimo-v2.6-pro 2.002; golden_wall_s: nanocodex@0.6.6+mimo-v2.6-pro 33.2
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-10-04 (golden USD is client-estimated by nanocodex; batch total not recorded)
 - Verdict: SNAPSHOT. Status: complete
@@ -39,7 +39,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: eve@0.60.1+qwen3.7-flash (eve@0.60.1 + qwen/qwen3.7-flash via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: standard. Judge: none
 - Primary (contract): eve@0.60.1+qwen3.7-flash 2 [1.466, 2.534]
-- Other metrics: contract_total: eve@0.60.1+qwen3.7-flash 14; task_success: eve@0.60.1+qwen3.7-flash 1; golden_usd_per_1k: eve@0.60.1+qwen3.7-flash n/a; golden_wall_s: eve@0.60.1+qwen3.7-flash 20.7
+- Other metrics: contract_total: eve@0.60.1+qwen3.7-flash 14; task_success: eve@0.60.1+qwen3.7-flash 1 [CI n/a: 1 task]; golden_usd_per_1k: eve@0.60.1+qwen3.7-flash n/a; golden_wall_s: eve@0.60.1+qwen3.7-flash 20.7
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-10-04 (single T6 call; no USD off the Vercel AI Gateway)
 - Verdict: SNAPSHOT. Status: complete
@@ -54,7 +54,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: flue@2.0.8+qwen3.7-flash (flue@2.0.8 + qwen/qwen3.7-flash via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: standard. Judge: none
 - Primary (contract): flue@2.0.8+qwen3.7-flash 2.429 [1.701, 3]
-- Other metrics: contract_total: flue@2.0.8+qwen3.7-flash 17; task_success: flue@2.0.8+qwen3.7-flash 1; golden_usd_per_1k: flue@2.0.8+qwen3.7-flash n/a; golden_wall_s: flue@2.0.8+qwen3.7-flash 12.9
+- Other metrics: contract_total: flue@2.0.8+qwen3.7-flash 17; task_success: flue@2.0.8+qwen3.7-flash 1 [CI n/a: 1 task]; golden_usd_per_1k: flue@2.0.8+qwen3.7-flash n/a; golden_wall_s: flue@2.0.8+qwen3.7-flash 12.9
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-09-18 (flue emits no tokens or USD on stdout)
 - Verdict: SNAPSHOT. Status: complete
@@ -68,7 +68,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: eve@0.60.1+qwen3.7-flash (eve@0.60.1 + qwen/qwen3.7-flash via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: standard. Judge: none
 - Primary (contract): eve@0.60.1+qwen3.7-flash 2 [1.466, 2.534]
-- Other metrics: contract_total: eve@0.60.1+qwen3.7-flash 14; task_success: eve@0.60.1+qwen3.7-flash 1; golden_usd_per_1k: eve@0.60.1+qwen3.7-flash n/a; golden_wall_s: eve@0.60.1+qwen3.7-flash 20.7
+- Other metrics: contract_total: eve@0.60.1+qwen3.7-flash 14; task_success: eve@0.60.1+qwen3.7-flash 1 [CI n/a: 1 task]; golden_usd_per_1k: eve@0.60.1+qwen3.7-flash n/a; golden_wall_s: eve@0.60.1+qwen3.7-flash 20.7
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-09-18 (no USD off the Vercel AI Gateway)
 - Verdict: SNAPSHOT. Status: complete
@@ -84,7 +84,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: omp@18.2.0+qwen3.7-flash (omp@18.2.0 + qwen/qwen3.7-flash via openrouter); pi@0.85.1+qwen3.7-flash (pi@0.85.1 + qwen/qwen3.7-flash via openrouter); opencode@1.18.30+qwen3.7-flash (opencode@1.18.30 + qwen/qwen3.7-flash via openrouter); dsh@0.1.6-alpha.2+qwen3.7-flash (dsh@0.1.6-alpha.2 + qwen/qwen3.7-flash via openrouter); crush@0.95.0+qwen3.7-flash (crush@0.95.0 + qwen/qwen3.7-flash via openrouter)
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: standard. Judge: none
 - Primary (contract): omp@18.2.0+qwen3.7-flash 2 [0.692, 3]; pi@0.85.1+qwen3.7-flash 2.429 [1.38, 3]; opencode@1.18.30+qwen3.7-flash 1.857 [0.613, 3]; dsh@0.1.6-alpha.2+qwen3.7-flash 2.857 [2.508, 3]; crush@0.95.0+qwen3.7-flash 2 [0.932, 3]
-- Other metrics: contract_total: omp@18.2.0+qwen3.7-flash 14, pi@0.85.1+qwen3.7-flash 17, opencode@1.18.30+qwen3.7-flash 13, dsh@0.1.6-alpha.2+qwen3.7-flash 20, crush@0.95.0+qwen3.7-flash 14; task_success: omp@18.2.0+qwen3.7-flash 1, pi@0.85.1+qwen3.7-flash 1, opencode@1.18.30+qwen3.7-flash 1, dsh@0.1.6-alpha.2+qwen3.7-flash 1, crush@0.95.0+qwen3.7-flash 1; golden_usd_per_1k: omp@18.2.0+qwen3.7-flash 0.821, pi@0.85.1+qwen3.7-flash 0.263, opencode@1.18.30+qwen3.7-flash 1.347, dsh@0.1.6-alpha.2+qwen3.7-flash 0.483, crush@0.95.0+qwen3.7-flash 0.873; golden_wall_s: omp@18.2.0+qwen3.7-flash 20, pi@0.85.1+qwen3.7-flash 6.1, opencode@1.18.30+qwen3.7-flash 28.35, dsh@0.1.6-alpha.2+qwen3.7-flash 27, crush@0.95.0+qwen3.7-flash 61
+- Other metrics: contract_total: omp@18.2.0+qwen3.7-flash 14, pi@0.85.1+qwen3.7-flash 17, opencode@1.18.30+qwen3.7-flash 13, dsh@0.1.6-alpha.2+qwen3.7-flash 20, crush@0.95.0+qwen3.7-flash 14; task_success: omp@18.2.0+qwen3.7-flash 1 [CI n/a: 1 task], pi@0.85.1+qwen3.7-flash 1 [CI n/a: 1 task], opencode@1.18.30+qwen3.7-flash 1 [CI n/a: 1 task], dsh@0.1.6-alpha.2+qwen3.7-flash 1 [CI n/a: 1 task], crush@0.95.0+qwen3.7-flash 1 [CI n/a: 1 task]; golden_usd_per_1k: omp@18.2.0+qwen3.7-flash 0.821, pi@0.85.1+qwen3.7-flash 0.263, opencode@1.18.30+qwen3.7-flash 1.347, dsh@0.1.6-alpha.2+qwen3.7-flash 0.483, crush@0.95.0+qwen3.7-flash 0.873; golden_wall_s: omp@18.2.0+qwen3.7-flash 20, pi@0.85.1+qwen3.7-flash 6.1, opencode@1.18.30+qwen3.7-flash 28.35, dsh@0.1.6-alpha.2+qwen3.7-flash 27, crush@0.95.0+qwen3.7-flash 61
 - Errors: 0 of 40, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, api basis, prices as of 2026-09-17 (whole-run spend not recorded for every harness; golden-task USD is in golden_usd_per_1k (omp spent $0.004178 over all 12 of its runs))
 - Verdict: SNAPSHOT. Status: complete
@@ -101,7 +101,7 @@ Every run, newest first. Method and changelog: METHOD.md. Open work: NEXT.md.
 - Compared: fx@0.0.10+grok-4.6 (fx@0.0.10 + grok-4.6 via xai (Grok subscription via fx))
 - Tasks: tier2-live-tests v1-A, 8 of 8 tasks x 1 repeats. Setup: custom (Ran on grok-4.6, not the cohort's qwen/qwen3.7-flash: the shipped fx 0.0.10 binary cannot reach OpenRouter or any OpenAI-compatible endpoint. T1-T7 and task success are valid harness evidence; T8 cost and wall time are not comparable and fx is excluded from any comparison.). Judge: none
 - Primary (contract): fx@0.0.10+grok-4.6 2.286 [1.257, 3]
-- Other metrics: contract_total: fx@0.0.10+grok-4.6 16; task_success: fx@0.0.10+grok-4.6 1; golden_usd_per_1k: fx@0.0.10+grok-4.6 n/a; golden_wall_s: fx@0.0.10+grok-4.6 21
+- Other metrics: contract_total: fx@0.0.10+grok-4.6 16; task_success: fx@0.0.10+grok-4.6 1 [CI n/a: 1 task]; golden_usd_per_1k: fx@0.0.10+grok-4.6 n/a; golden_wall_s: fx@0.0.10+grok-4.6 21
 - Errors: 0 of 8, counted as zero. Harness failures are test results (scored 0-3), not errors.
 - Cost: n/a total, subscription basis (Grok subscription; fx emits no per-token USD)
 - Verdict: SNAPSHOT. Status: complete
