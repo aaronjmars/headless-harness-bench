@@ -20,6 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aaronjmars/bench-kit@v0.2.0
+      - uses: aaronjmars/bench-kit@v0.4.0
         with:
           args: --warn-only # drop once the standard has settled here
