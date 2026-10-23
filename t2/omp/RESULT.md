@@ -18,6 +18,13 @@ Notes on flags vs the proposed spec:
 - Added `--auto-approve`. Without it, edit/bash tool calls block on an approval prompt and the headless run never completes.
 - Model id form omp wants: `openrouter/qwen/qwen3.7-flash` (provider-prefixed selector).
 
+Re-runs add `--extension t2/omp/openrouter-attribution.ts` (it loads even with
+`--no-extensions`). omp stamps OpenRouter calls with its own app referer
+(`https://omp.sh/`) after any config headers; the extension swaps only those headers
+for Aeon's app attribution so the spend is credited to Aeon. It registers no tools and
+changes no prompt, so T1-T8 measure the same surface. The 2026-09-17 runs above did not
+load it.
+
 ## TASK SUCCESS: PASS (real did-it-work signal)
 - `node cli.js --version` -> `1.4.2`
 - `node cli.js` -> `hello`

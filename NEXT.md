@@ -9,7 +9,8 @@ Updated 2026-10-09. No runs since 2026-10-04.
    with at least 2 repeats per harness. Until then every verdict stays SNAPSHOT and no
    ranking is a stats-backed WINNER (METHOD.md section 6).
 2. **Re-run omp and opencode on current releases.** Tier-2 used omp 18.2.0 and opencode
-   1.18.30 while Tier-1 audited 18.2.4 and 1.18.31.
+   1.18.30 while Tier-1 audited 18.2.4 and 1.18.31. omp runs add
+   `--extension t2/omp/openrouter-attribution.ts` (see t2/omp/RESULT.md).
 3. **Write down per-criterion Tier-1 scores** for the first eight harnesses (only category
    means survive; nanocodex has them), so every total recomputes exactly.
 4. **crush raw evidence**: on the next crush run, commit the `crush session show --json`
