@@ -183,3 +183,9 @@ is the ceiling.
   version stays 1-A.
 - 2026-10-09: backfilled to the bench standard (bench-kit v0.2.0): one manifest and
   samples file per run, generated RESULTS.md and runs/INDEX.md.
+- 2026-10-26: active Tier-2 launchers use bench-kit v0.6.0 for tracked
+  per-trial sweep ledgers, provider-auth classification with null scores,
+  per-credential stop after three failures, and per-trial/final secret-value
+  scrubbing. A completed capture is not a human T1-T8 score: it stays
+  unscored until the rubric is applied. Frozen historical evidence and
+  `t2/pi/v1.0.2/` launchers are unchanged.

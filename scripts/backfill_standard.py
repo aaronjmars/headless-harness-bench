@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write the bench standard files (runs/<id>/manifest.json + samples.jsonl) for every run.
 
-Bench standard: aaronjmars/bench-kit v0.2.0, STANDARD.md sections 4 and 5.
+Bench standard: aaronjmars/bench-kit v0.6.0, STANDARD.md sections 4, 5 and 11.
 
     python scripts/backfill_standard.py            # write runs/*/manifest.json + samples.jsonl
     python scripts/backfill_standard.py --check    # fail if the committed files drift from this script

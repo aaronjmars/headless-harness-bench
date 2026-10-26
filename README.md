@@ -69,6 +69,21 @@ harness has a complete T1-T8 report and task verdict, parses each non-empty JSON
 capture, and rejects credential-shaped files under `t2/`. Empty captures stay valid because
 some startup and cancellation failures intentionally produce no structured output.
 
+Active Tier-2 batch/cancellation launchers in `t2/pi/`, `t2/nanocodex/`,
+`t2/dsh/`, `t2/eve/` and `t2/fx/t6.js` require
+`python3 -m pip install -r requirements-runner.txt` (bench-kit v0.6.0).
+Each invocation creates a tracked `data/sweeps/<id>.json` verdict ledger.
+Finished captures are scrubbed of exported keys and isolated-profile credentials
+immediately and at finalization; provider authentication errors have null scores.
+The bounded Pi and nanocodex batches launch their existing six and seven trial
+waves, respectively. Already in-flight trials finish; the sweep halts on three
+consecutive failures of one credential. Historical `t2/pi/v1.0.2/` scripts
+remain frozen. A successful capture awaits a human rubric score and is not
+counted as a scored success.
+
+Offline orchestration smoke (real batch, local stub, synthetic key, no model
+or network): `python3 -m unittest discover -s tests -p test_tier2_sweep.py -v`.
+
 ## Layout
 
 | Path | What |

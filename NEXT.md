@@ -1,6 +1,6 @@
 # NEXT
 
-Updated 2026-10-09. No runs since 2026-10-04.
+Updated 2026-10-26. No scored runs since 2026-10-04.
 
 ## Open work
 
@@ -17,13 +17,12 @@ Updated 2026-10-09. No runs since 2026-10-04.
    capture next to RESULT.md (the 2026-09-17 capture was not kept).
 5. **eve golden trace**: re-run the golden task and capture `eve traces --json` from the
    same session (the committed trace is from an earlier golden session).
-6. **Emit the standard from the runners.** The per-harness runner scripts under `t2/`
-   write raw evidence only. `scripts/backfill_standard.py` builds the run manifests from
-   hand-entered scores plus golden numbers recomputed from that evidence. A new run should
-   add its scores there (or a runner should write `runs/<id>/samples.jsonl` directly),
-   then `bench-kit stats && bench-kit render`.
-7. **Turn bench-lint into a hard check**: drop `--warn-only` in
-   `.github/workflows/validate.yml` once the standard has settled here.
+6. **Emit scored standard runs from new trials.** The active Tier-2 launchers
+   now persist a per-trial sweep ledger, mark provider auth failures as errors,
+   and scrub captures. Human T1-T8 rubric scores still enter the standard run
+   through `scripts/backfill_standard.py` (or future direct sample emission);
+   then run `bench-kit stats && bench-kit render`. A captured trial awaiting
+   a human score is explicitly marked skipped, not scored zero.
 
 ## Track (carried from the 2026-10-04 write-up and BENCHMARK.md)
 
