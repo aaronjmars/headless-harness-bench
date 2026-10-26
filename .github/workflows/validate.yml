@@ -21,4 +21,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aaronjmars/bench-kit@v0.5.0
+      - uses: aaronjmars/bench-kit@v0.6.0

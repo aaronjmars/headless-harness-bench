@@ -55,7 +55,7 @@ python -m unittest discover -s tests -v
 
 # rebuild the standard files from the scores + raw evidence, then stats, render and lint
 python scripts/backfill_standard.py            # --check only compares
-uv tool install git+https://github.com/aaronjmars/bench-kit@v0.5.0
+uv tool install git+https://github.com/aaronjmars/bench-kit@v0.6.0
 bench-kit stats && bench-kit render && bench-kit lint
 
 # re-render the table images in images/
