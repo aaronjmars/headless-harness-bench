@@ -5,11 +5,18 @@ on:
   pull_request:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
+  # One job, not two: each job bills at least a full minute, and the lint takes
+  # seconds. bench-kit lint goes first so it sees the clean checkout.
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: aaronjmars/bench-kit@451341a6e2709b446b49c78cace060297171c2d5 # v0.6.2
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
@@ -19,8 +26,3 @@ jobs:
         run: python -m pip install -r requirements-runner.txt
       - name: Run validator tests
         run: python -m unittest discover -s tests -v
-  bench-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: aaronjmars/bench-kit@451341a6e2709b446b49c78cace060297171c2d5 # v0.6.2
